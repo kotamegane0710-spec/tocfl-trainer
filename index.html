@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>TOCFL A2 Trainer v6</title>
+<title>TOCFL A2 Trainer v7</title>
 <style>
 :root{--bg:#0f1419;--pa:#172029;--pb:#1e2a35;--ln:#2c3a47;--tx:#e8eef4;--sb:#9db0c2;--ac:#3fa7d6;--a2:#f2b134;--ok:#4caf7d;--ng:#e2604f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -48,7 +48,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 </head>
 <body>
 <header>
-<h1>TOCFL Band A Level 2 トレーナー v6</h1>
+<h1>TOCFL Band A Level 2 トレーナー v7</h1>
 <p id="hd">読み込み中…</p>
 </header>
 <nav>
@@ -97,9 +97,9 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <h3>2. 語順</h3>
 <p>主語 ＋ 時間 ＋ 場所 ＋ 方式 ＋ 動詞。日本語と違い、時間と場所は必ず動詞より前に置きます（例：私は／明日／台北で／友達と／食事します）。</p>
 <h3>3. 日本語と意味がずれる漢字語</h3>
-<p>「勉強＝無理強い」「告訴＝伝える」のように、字面で判断すると誤読する語です。③語彙表の「要注意語」カテゴリで集中的に処理してください。</p>
-<h3>カタカナ表示について</h3>
-<p>カタカナは導入期の補助です。韻母 e（/ɤ/）、有気音と無気音、-n と -ng はカタカナでは区別できません。⑧チェックリストの「カタカナ無しでピンインが読める」を達成したら参照をやめてください。</p>
+<p>「勉強＝無理強い」「告訴＝伝える」のように、字面で判断すると誤読する語です。③語彙表の「要注意語」カテゴリで集中処理してください。</p>
+<h3>発音表示について</h3>
+<p>ピンインは「不」「一」の変調を自動反映します（不太貴＝bú tài guì、一本書＝yì běn shū）。カタカナは導入期の補助で、韻母 e（/ɤ/）、有気音と無気音、-n と -ng は区別できません。⑧チェックリストの「カタカナ無しでピンインが読める」を達成したら参照をやめてください。</p>
 </div>
 </section>
 
@@ -167,7 +167,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <footer>単一HTMLファイル・外部通信なし</footer>
 
 <script>
-/* ===== 発音変換（ピンイン→注音・カタカナ）v6 ===== */
+/* ===== 発音変換（ピンイン→注音・カタカナ）v7 ===== */
 const TONE={"ā":"a1","á":"a2","ǎ":"a3","à":"a4","ē":"e1","é":"e2","ě":"e3","è":"e4","ī":"i1","í":"i2","ǐ":"i3","ì":"i4","ō":"o1","ó":"o2","ǒ":"o3","ò":"o4","ū":"u1","ú":"u2","ǔ":"u3","ù":"u4","ǖ":"v1","ǘ":"v2","ǚ":"v3","ǜ":"v4","ü":"v"};
 function splitTone(p){let t=0,s="";for(const ch of p){if(TONE[ch]){const v=TONE[ch];s+=v[0];if(v[1])t=+v[1];}else s+=ch;}return[s.toLowerCase(),t];}
 const ZI={b:"ㄅ",p:"ㄆ",m:"ㄇ",f:"ㄈ",d:"ㄉ",t:"ㄊ",n:"ㄋ",l:"ㄌ",g:"ㄍ",k:"ㄎ",h:"ㄏ",j:"ㄐ",q:"ㄑ",x:"ㄒ",zh:"ㄓ",ch:"ㄔ",sh:"ㄕ",r:"ㄖ",z:"ㄗ",c:"ㄘ",s:"ㄙ"};
@@ -1259,7 +1259,7 @@ const VOCAB=`
 `.trim().split("\n").map(l=>l.split("|"));
 const V=[];VOCAB.forEach(r=>{if(r.length<4)return;if(V.some(v=>v.z===r[0]&&v.c===r[3]))return;const c=conv(r[1]);V.push({z:r[0],p:r[1],m:r[2],c:r[3],zy:c[0],kt:c[1]});});
 
-/* ===== 漢字→ピンイン・カタカナ 自動変換 ===== */
+/* ===== 漢字→ピンイン・カタカナ（不／一の変調と句読点保持に対応） ===== */
 const DICT={};
 V.forEach(v=>{const sy=v.p.trim().split(/\s+/);
  if(!DICT[v.z])DICT[v.z]=sy;
@@ -1269,14 +1269,24 @@ const EXTRA={"北":"běi","戴":"dài","偷":"tōu","雄":"xióng","抽":"chōu"
 "中文":"zhōng wén","日文":"rì wén","十八":"shí bā","一次":"yí cì","關上":"guān shàng"};
 Object.keys(EXTRA).forEach(k=>DICT[k]=EXTRA[k].split(" "));
 const MEAN={};V.forEach(v=>{if(!MEAN[v.z])MEAN[v.z]=v.m;});
-function annotate(t){const cn=[...t];let i=0,py=[],kt=[],keys=[];
+function annotate(t){const cn=[...t];let i=0,seq=[],keys=[];
  while(i<cn.length){let hit=null,len=0,word="";
   for(let L=4;L>=1;L--){const w=cn.slice(i,i+L).join("");if(DICT[w]){hit=DICT[w];len=L;word=w;break;}}
-  if(hit){const p=hit.join(" ");py.push(p);kt.push(conv(p)[1]);
-   if(len>1&&MEAN[word]&&keys.length<3)keys.push(word+"（"+p+"／"+conv(p)[1]+"）＝"+MEAN[word]);
+  if(hit){hit.forEach(p=>seq.push({p:p,t:splitTone(p)[1]}));
+   if(len>1&&MEAN[word]&&keys.length<3){const pp=hit.join(" ");keys.push(word+"（"+pp+"／"+conv(pp)[1]+"）＝"+MEAN[word]);}
    i+=len;}
-  else{const ch=cn[i];if(/[\u4e00-\u9fff]/.test(ch)){py.push("—");kt.push("");}i++;}}
- return{py:py.join(" "),kt:kt.join(""),keys:keys};}
+  else{const ch=cn[i];
+   if(/[\u4e00-\u9fff]/.test(ch))seq.push({p:"—",t:0});
+   else if(/[／，。、？！]/.test(ch))seq.push({sep:ch});
+   i++;}}
+ for(let k=0;k<seq.length;k++){const a=seq[k];if(a.sep)continue;
+  let nx=null;for(let m=k+1;m<seq.length;m++){if(!seq[m].sep){nx=seq[m];break;}}
+  if(a.p==="bù"&&nx&&nx.t===4)a.p="bú";
+  if(a.p==="yī"&&nx&&nx.t)a.p=(nx.t===4)?"yí":"yì";}
+ let py=[],kt=[];
+ seq.forEach(a=>{if(a.sep){py.push(a.sep);kt.push(a.sep);}
+  else{py.push(a.p);kt.push(a.p==="—"?"":conv(a.p)[1]);}});
+ return{py:py.join(" ").replace(/\s*([／，。、？！])\s*/g,"$1"),kt:kt.join(""),keys:keys};}
 function annoHTML(t){const a=annotate(t);
  return`<div style="font-size:13px;color:var(--ac);margin-top:4px">${a.py}</div>
  <div style="font-size:13px;color:var(--sb)">［${a.kt}］</div>`+
@@ -1561,7 +1571,7 @@ $("#mf").onclick=()=>{if(!mk.length)return;clearInterval(mt);let c=0,h="";
  window.scrollTo(0,document.body.scrollHeight);};
 
 /* チェックリスト */
-const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","-n と -ng を聞き分けられる","三声変調／不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","文法40項目の例文を各3回音読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
+const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","-n と -ng を聞き分けられる","三声変調を理解した","不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","文法40項目の例文を各3回音読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
 $("#ca").innerHTML=CK.map((t,i)=>`<label class="ck"><input type="checkbox" data-c="${i}" ${chk[i]?"checked":""}><span>${t}</span></label>`).join("");
 $$("#ca input").forEach(b=>b.onchange=()=>{chk[b.dataset.c]=b.checked;LS.set("chk",chk);});
 

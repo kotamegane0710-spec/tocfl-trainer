@@ -1,5 +1,5 @@
 // File: sw.js
-const CACHE_NAME = 'tocfl-a2-v6';
+const CACHE_NAME = 'tocfl-a2-v7';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
