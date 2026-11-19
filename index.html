@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>TOCFL A2 Trainer v3</title>
+<title>TOCFL A2 Trainer v4</title>
 <style>
 :root{--bg:#0f1419;--pa:#172029;--pb:#1e2a35;--ln:#2c3a47;--tx:#e8eef4;--sb:#9db0c2;--ac:#3fa7d6;--a2:#f2b134;--ok:#4caf7d;--ng:#e2604f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -48,7 +48,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 </head>
 <body>
 <header>
-<h1>TOCFL Band A Level 2 トレーナー v3</h1>
+<h1>TOCFL Band A Level 2 トレーナー v4</h1>
 <p id="hd">読み込み中…</p>
 </header>
 <nav>
@@ -130,7 +130,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <section id="t4">
 <h2>分野別演習</h2>
 <div class="card"><div class="row"><select id="qc"></select><button class="btn" id="qs">出題</button><button class="btn s" id="qw">誤答のみ再演習</button><button class="btn s" id="qe">全解説</button></div>
-<p style="font-size:12px;color:var(--sb);margin:6px 0 0">誤答は自動で蓄積され、「誤答のみ再演習」で何度でも潰し込めます。</p></div>
+<p style="font-size:12px;color:var(--sb);margin:6px 0 0">解答すると完成文・ピンイン・カタカナ・日本語訳・重要語が表示されます。誤答は自動で蓄積されます。</p></div>
 <div id="qa"></div>
 </section>
 
@@ -193,7 +193,7 @@ function syl(p){const[s,t]=splitTone(p);let ini="",fin=s;
 function conv(py){const ps=py.replace(/／/g,"/").split(/[\s/]+/).filter(Boolean);let z=[],k=[];
  ps.forEach(p=>{const r=syl(p);z.push(r[0]);k.push(r[1]);});return[z.join(" "),k.join("")];}
 
-/* ===== 語彙データ（約1,040語／繁体字|ピンイン|日本語|カテゴリ） ===== */
+/* ===== 語彙データ（繁体字|ピンイン|日本語|カテゴリ） ===== */
 const VOCAB=`
 我|wǒ|私|代名詞・疑問
 你|nǐ|あなた|代名詞・疑問
@@ -630,7 +630,7 @@ const VOCAB=`
 冰的|bīng de|冷たいもの|飲食②
 少冰|shǎo bīng|氷少なめ|飲食②
 半糖|bàn táng|砂糖半分|飲食②
-素食|sù shí|精進料理・ベジタリアン食|飲食②
+素食|sù shí|精進料理|飲食②
 學校|xué xiào|学校|場所・交通
 教室|jiào shì|教室|場所・交通
 公司|gōng sī|会社|場所・交通
@@ -648,7 +648,7 @@ const VOCAB=`
 餐廳|cān tīng|レストラン|場所・交通
 機場|jī chǎng|空港|場所・交通
 火車站|huǒ chē zhàn|鉄道駅|場所・交通
-捷運|jié yùn|MRT（地下鉄）|場所・交通
+捷運|jié yùn|MRT|場所・交通
 公車|gōng chē|路線バス|場所・交通
 計程車|jì chéng chē|タクシー|場所・交通
 腳踏車|jiǎo tà chē|自転車|場所・交通
@@ -1242,6 +1242,29 @@ const VOCAB=`
 `.trim().split("\n").map(l=>l.split("|"));
 const V=[];VOCAB.forEach(r=>{if(r.length<4)return;if(V.some(v=>v.z===r[0]&&v.c===r[3]))return;const c=conv(r[1]);V.push({z:r[0],p:r[1],m:r[2],c:r[3],zy:c[0],kt:c[1]});});
 
+/* ===== 漢字→ピンイン・カタカナ 自動変換 ===== */
+const DICT={};
+V.forEach(v=>{const sy=v.p.trim().split(/\s+/);
+ if(!DICT[v.z])DICT[v.z]=sy;
+ if(sy.length===[...v.z].length)[...v.z].forEach((ch,i)=>{if(!DICT[ch])DICT[ch]=[sy[i]];});});
+const EXTRA={"北":"běi","戴":"dài","偷":"tōu","雄":"xióng","抽":"chōu","菸":"yān","懂":"dǒng",
+"高雄":"gāo xióng","台北":"tái běi","有空":"yǒu kòng","抽菸":"chōu yān","公分":"gōng fēn",
+"中文":"zhōng wén","日文":"rì wén","十八":"shí bā","一次":"yí cì","關上":"guān shàng"};
+Object.keys(EXTRA).forEach(k=>DICT[k]=EXTRA[k].split(" "));
+const MEAN={};V.forEach(v=>{if(!MEAN[v.z])MEAN[v.z]=v.m;});
+function annotate(t){const cn=[...t];let i=0,py=[],kt=[],keys=[];
+ while(i<cn.length){let hit=null,len=0,word="";
+  for(let L=4;L>=1;L--){const w=cn.slice(i,i+L).join("");if(DICT[w]){hit=DICT[w];len=L;word=w;break;}}
+  if(hit){const p=hit.join(" ");py.push(p);kt.push(conv(p)[1]);
+   if(len>1&&MEAN[word]&&keys.length<3)keys.push(word+"（"+p+"／"+conv(p)[1]+"）＝"+MEAN[word]);
+   i+=len;}
+  else{const ch=cn[i];if(/[\u4e00-\u9fff]/.test(ch)){py.push("—");kt.push("");}i++;}}
+ return{py:py.join(" "),kt:kt.join(""),keys:keys};}
+function annoHTML(t){const a=annotate(t);
+ return`<div style="font-size:13px;color:var(--ac);margin-top:4px">${a.py}</div>
+ <div style="font-size:13px;color:var(--sb)">［${a.kt}］</div>`+
+ (a.keys.length?`<div style="font-size:12px;color:var(--sb);margin-top:4px">重要語：${a.keys.join("／")}</div>`:"");}
+
 /* ===== 文法40 ===== */
 const G=[
 ["① 名詞述語：A 是 B","我是日本人。／他不是學生。","否定は「不是」。形容詞には是を使わない。"],
@@ -1259,7 +1282,7 @@ const G=[
 ["⑬ 連動文","我去餐廳吃飯。","動作の順に動詞を並べる。"],
 ["⑭ 了①（完了）","我吃了飯。／買了兩本書。","動詞直後。"],
 ["⑮ 了②（変化）","下雨了。／他已經十八歲了。","文末。状況の変化。"],
-["⑯ 否定と了","我沒吃飯。（×沒吃了）","沒＋動詞。了は消える。"],
+["⑯ 否定と了","我沒吃飯。","沒＋動詞。了は消える。"],
 ["⑰ 過（経験）","我去過台灣。／沒去過。","否定は沒…過。"],
 ["⑱ 著（持続）","他戴著帽子。／門開著。","状態の継続。"],
 ["⑲ 在／正在（進行）","我在看書。","進行中の動作。"],
@@ -1270,7 +1293,7 @@ const G=[
 ["㉔ A 跟 B 一樣","這個跟那個一樣貴。","否定は「不一樣」。"],
 ["㉕ 最上級：最","這家最便宜。","最＋形容詞。"],
 ["㉖ 沒有ほど〜ない","我沒有他高。","比の否定表現。"],
-["㉗ 様態補語：得","他跑得很快。","目的語があれば動詞を繰り返す。"],
+["㉗ 様態補語：得","他跑得很快。／說得不好。","目的語があれば動詞を繰り返す。"],
 ["㉘ 結果補語","聽懂了／看完了／吃飽了","否定は沒。"],
 ["㉙ 方向補語","回來／進去／拿出來","来＝話者方向、去＝話者から離れる。"],
 ["㉚ 可能補語","聽得懂／看不完","得/不を挟む。"],
@@ -1284,6 +1307,21 @@ const G=[
 ["㊳ 不但…而且…","他不但會中文，而且會日文。","累加。"],
 ["㊴ 一…就…","我一回家就睡覺。","〜するとすぐ。"],
 ["㊵ 除了…以外，還/都","除了我以外，大家都去了。","還＝追加、都＝除外。"]];
+const GJA=["私は日本人です／彼は学生ではありません","今日は暑い／高すぎない",
+"机の上に本がある／本は机の上にある","あなたは先生ですか","行きますか／良いですか",
+"何が欲しいですか／彼はどこにいますか","私は元気です、あなたは？","私の本／とても高い服",
+"本1冊／コーヒー3杯／2人","この本／あの3人","私は明日台北へ行きます","私は家でご飯を食べます",
+"私はレストランへ食事に行きます","ご飯を食べた／本を2冊買った","雨が降ってきた／彼はもう18歳になった",
+"私はご飯を食べていません","台湾へ行ったことがある／行ったことがない",
+"彼は帽子をかぶっている／ドアが開いている","私は本を読んでいます","もうすぐ雨が降ります",
+"泳げます／今日は行けません／入ってもいいですか","行きたい／買いたい／来年台湾へ行くつもり",
+"彼は私より背が高い／3センチ高い","これはあれと同じ値段です","この店が一番安いです",
+"私は彼ほど背が高くない","彼は走るのが速い／話すのが上手でない",
+"聞き取れた／読み終えた／満腹になった","帰ってくる／入っていく／取り出す",
+"聞き取れる／読み終えられない","私はドアを閉めました","私のお金が盗まれました",
+"台北から高雄まで／家は駅から近い","私にください／彼に言う／私に優しい",
+"雨が降ったので行きませんでした","高いけれどおいしいです","時間があれば行きます",
+"中国語だけでなく日本語もできます","家に帰るとすぐ寝ます","私以外はみんな行きました"];
 
 /* ===== 演習 ===== */
 function Q(c,s,o,a,e){return{c,s,o:o.split("|"),a,e};}
@@ -1352,7 +1390,7 @@ Q("要注意語","「我走路去」の意味は？","走って行く|歩いて�
 Q("要注意語","「請放心」の意味は？","心を置いてください|安心してください|気をつけてください|考えてください",1,"放心＝安心する。"),
 Q("要注意語","「今天方便嗎？」の意味は？","今日は便利ですか|今日はご都合よろしいですか|今日は簡単ですか|今日は安いですか",1,"方便＝都合が良い。"),
 Q("要注意語","「我不舒服」の意味は？","納得できない|体調が悪い|居心地が悪い|服が合わない",1,"舒服＝体調が良い。"),
-Q("要注意語","「我看了今天的新聞」の意味は？","今日の新聞紙を読んだ|今日のニュースを見た|今日の広告を見た|今日の雑誌を読んだ",1,"新聞＝ニュース。新聞紙は報紙。"),
+Q("要注意語","「我看了今天的新聞」の意味は？","今日の新聞紙を読んだ|今日のニュースを見た|今日の広告を見た|今日の雑誌を読んだ",1,"新聞＝ニュース。"),
 Q("要注意語","「他在便利商店打工」の意味は？","殴り合っている|アルバイトをしている|働きに来た|買い物している",1,"打工＝アルバイト。"),
 Q("数字・時間","現在三點半。意味は？","3時15分|3時30分|3時45分|3時",1,"半＝30分。"),
 Q("数字・時間","我等了兩個小時。意味は？","2時に待った|2時間待った|2回待った|2日待った",1,"兩個小時＝2時間。"),
@@ -1360,6 +1398,26 @@ Q("数字・時間","十月二十號星期五。何曜日？","木曜|金曜|土
 Q("数字・時間","一共是一千兩百五十元。いくら？","1250元|1205元|12500元|1150元",0,"兩百＝200。"),
 Q("数字・時間","他下午四點二十分到。何時？","4:02|4:20|4:12|16:22",1,"二十分＝20分。"),
 Q("数字・時間","「打八折」の意味は？","8%引き|2割引き|8割引き|8倍",1,"定価の80%＝2割引。")];
+const QJA=["彼は日本人です。","今日は暑いです。","机の上に本が1冊あります。","私の携帯は机の上にあります。",
+"あなたは学生ですか。","行きますか、行きませんか。","彼は先生ではありません。","私は元気です、あなたは？",
+"これは私の本です。","誰があなたの先生ですか。","コーヒーを3杯ください。","彼は本を2冊買いました。",
+"机の上に紙が1枚あります。","犬を1匹飼っています。","あの車は高いです。","この服はきれいです。",
+"靴を1足買いました。","牛肉麺を1杯ください。","お客様が5名来ました。","この道にコンビニが3軒あります。",
+"中国語を2年学びました。","台湾に3回行ったことがあります。","昨日、本を3冊買いました。","ご飯を食べていません。",
+"台湾へ行ったことがあり、とても気に入っています。","雨が降ってきた、傘を持って行こう。","彼はテレビを見ています。",
+"ドアは開いています、入ってください。","もうすぐ退勤です。","もう宿題を終えました。",
+"泳げます、子どもの頃に習いました。","今日は風邪なので行けません。","ここでタバコを吸ってもいいですか。",
+"コーヒーを1杯ください。","もっと早く寝るべきです。","明日は雨が降るでしょう。","彼は私より背が高い。",
+"彼は私より少し背が高い。","これはあれと同じ値段です。","私は彼ほど背が高くない。","この店はここで一番安い。",
+"今日は昨日よりずっと暑い。","昨日は家で本を読みました。","彼は走るのが速い。","友達と一緒に行きます。",
+"窓を閉めました。","彼は中国語を話すのが上手です。","台北から高雄まで2時間かかります。",
+"聞き取れません、もう一度言ってください。","ご飯が多すぎて食べきれません。","彼は歩いて入ってきました。",
+"もうお腹いっぱいです。","雨が降ったので行きませんでした。","高いけれどおいしいです。","時間があれば行きます。",
+"中国語だけでなく日本語もできます。","家に帰るとすぐ寝ます。","私以外はみんな行きました。",
+"彼は私にこの件を伝えました。","彼に無理強いしないで。","私は歩いて行きます。","ご安心ください。",
+"今日はご都合よろしいですか。","体調が良くありません。","今日のニュースを見ました。",
+"彼はコンビニでアルバイトしています。","今は3時半です。","2時間待ちました。","10月20日金曜日。",
+"合計1,250元です。","彼は午後4時20分に着きます。","2割引（定価の80%）。"];
 
 /* ===== 短文読解 ===== */
 const RD=[
@@ -1415,13 +1473,33 @@ function list(){const q=$("#sq").value.toLowerCase(),c=$("#cs2").value;
 $("#sq").oninput=list;$("#cs2").onchange=list;list();
 
 /* 文法 */
-$("#ga").innerHTML=G.map(g=>`<div class="card"><b style="color:var(--a2)">${g[0]}</b><div class="psg" style="margin:8px 0">${g[1]}</div><div style="font-size:13px;color:var(--sb)">${g[2]}</div></div>`).join("");
+$("#ga").innerHTML=G.map((g,i)=>`<div class="card"><b style="color:var(--a2)">${g[0]}</b>
+<div class="psg" style="margin:8px 0">${g[1]}${annoHTML(g[1])}</div>
+<div style="font-size:13px">訳：${GJA[i]||""}</div>
+<div style="font-size:13px;color:var(--sb);margin-top:4px">${g[2]}</div></div>`).join("");
 
 /* 演習 */
 $("#qc").innerHTML='<option value="">全分野</option>'+[...new Set(QS.map(q=>q.c))].map(c=>`<option>${c}</option>`).join("");
+function pickCN(q){let t;const opt=q.o[q.a];
+ if(q.c==="語順")t=opt;
+ else if(q.s.includes("___")){
+  if(opt.includes("／")){const ps=opt.split("／");let k=0;t=q.s.replace(/___/g,()=>ps[k++]||"");}
+  else t=q.s.replace("___",opt);}
+ else t=q.s;
+ const m=t.match(/[「『]([^」』]+)[」』]/);if(m)t=m[1];
+ if(t.includes("。"))t=t.split("。")[0];
+ return t.replace(/（[^）]*）/g,"").replace(/[^\u4e00-\u9fff，、？！]/g,"");}
 let ok=0,ans=0;
 function render(arr,el,track){ok=0;ans=0;
- el.innerHTML=arr.map((q,i)=>`<div class="q"><div style="font-size:12px;color:var(--sb)">${q.c||""} ${i+1}/${arr.length}</div><div class="psg" style="margin:6px 0">${q.s}</div>${q.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${o}</button>`).join("")}<div class="exp" id="e${i}">正解：${q.o[q.a]}<br>${q.e}</div></div>`).join("");
+ el.innerHTML=arr.map((q,i)=>{
+  const cn=pickCN(q),ja=QJA[QS.indexOf(q)]||"";
+  return`<div class="q"><div style="font-size:12px;color:var(--sb)">${q.c||""} ${i+1}/${arr.length}</div>
+  <div class="psg" style="margin:6px 0">${q.s}</div>
+  ${q.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${o}</button>`).join("")}
+  <div class="exp" id="e${i}"><b>正解：${q.o[q.a]}</b><br>${q.e}
+  <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--ln)">
+  <div style="font-size:16px;color:var(--tx)">${cn}</div>${annoHTML(cn)}
+  <div style="font-size:13px;color:var(--tx);margin-top:4px">訳：${ja}</div></div></div></div>`;}).join("");
  el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
   const i=+b.dataset.q,j=+b.dataset.o,q=arr[i],ex=el.querySelector("#e"+i);
   if(ex.classList.contains("on"))return;
@@ -1456,7 +1534,9 @@ $("#ms2").onclick=()=>{mk=QS.slice().sort(()=>Math.random()-.5).slice(0,30);
  mt=setInterval(()=>{sec++;$("#tm").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");},1000);};
 $("#mf").onclick=()=>{if(!mk.length)return;clearInterval(mt);let c=0,h="";
  mk.forEach((q,i)=>{const s=document.querySelector(`input[name=m${i}]:checked`),v=s?+s.value:-1;
-  if(v==q.a)c++;else{h+=`<div style="margin:6px 0;font-size:13px"><b>Q${i+1}</b> ${q.s}<br>正解：${q.o[q.a]}／${q.e}</div>`;if(!wrong.includes(q.s))wrong.push(q.s);}});
+  if(v==q.a)c++;else{const cn=pickCN(q),ja=QJA[QS.indexOf(q)]||"";
+   h+=`<div style="margin:8px 0;font-size:13px"><b>Q${i+1}</b> ${q.s}<br>正解：${q.o[q.a]}／${q.e}<div style="font-size:15px;margin-top:4px">${cn}</div>${annoHTML(cn)}<div>訳：${ja}</div></div>`;
+   if(!wrong.includes(q.s))wrong.push(q.s);}});
  LS.set("wrong",wrong);
  const est=Math.round(c/mk.length*80);
  $("#mr").style.display="block";
@@ -1464,7 +1544,7 @@ $("#mf").onclick=()=>{if(!mk.length)return;clearInterval(mt);let c=0,h="";
  window.scrollTo(0,document.body.scrollHeight);};
 
 /* チェックリスト */
-const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","三声変調／不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
+const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","三声変調／不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","文法40項目の例文を各3回音読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
 $("#ca").innerHTML=CK.map((t,i)=>`<label class="ck"><input type="checkbox" data-c="${i}" ${chk[i]?"checked":""}><span>${t}</span></label>`).join("");
 $$("#ca input").forEach(b=>b.onchange=()=>{chk[b.dataset.c]=b.checked;LS.set("chk",chk);});
 
