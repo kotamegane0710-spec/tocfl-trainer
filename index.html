@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TOCFL Band A Level 2 トレーナー</title>
+<meta name="theme-color" content="#0f1419">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TOCFL A2">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{--bg:#0f1419;--panel:#172029;--panel2:#1e2a35;--line:#2c3a47;--txt:#e8eef4;--sub:#9db0c2;--accent:#3fa7d6;--accent2:#f2b134;--ok:#4caf7d;--ng:#e2604f;--t1:#e2604f;--t2:#f2b134;--t3:#4caf7d;--t4:#3fa7d6;--t5:#9db0c2;}
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;font-family:system-ui,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;
+    padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);overscroll-behavior-y:contain;}
+  header{background:linear-gradient(135deg,#13293d,#1c4966);padding:16px;border-bottom:2px solid var(--accent);padding-top:calc(16px + env(safe-area-inset-top));}
+  header h1{margin:0;font-size:19px;} header p{margin:6px 0 0;color:#bdd6e8;font-size:12px;}
+  nav{display:flex;flex-wrap:wrap;gap:4px;background:var(--panel);padding:8px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);}
+  nav button{background:transparent;border:1px solid var(--line);color:var(--sub);padding:8px 11px;border-radius:6px;cursor:pointer;font-size:13px;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+  nav button.active{background:var(--accent);color:#06202e;font-weight:700;}
+  main{max-width:1000px;margin:0 auto;padding:18px 14px calc(80px + env(safe-area-inset-bottom));}
+  section{display:none;} section.active{display:block;}
+  h2{font-size:18px;border-left:5px solid var(--accent);padding-left:10px;margin-top:26px;}
+  h3{font-size:15px;color:var(--accent2);margin-top:20px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;}
+  th{background:var(--panel2);color:var(--accent2);}
+  .zh{font-size:17px;font-weight:700;} .py{color:var(--accent);font-size:13px;}
+  .bpmf{font-size:15px;color:var(--accent2);} .kana{font-size:14px;color:#ff9fb0;}
+  .muted{color:var(--sub);font-size:12px;}
+  .btn{background:var(--accent);color:#06202e;border:none;padding:10px 16px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;margin:4px 4px 4px 0;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+  .btn.sec{background:var(--panel2);color:var(--txt);border:1px solid var(--line);} .btn.warn{background:var(--accent2);color:#2a1f00;}
+  .flash{background:linear-gradient(135deg,#1b2b3a,#223a4d);border:1px solid var(--accent);border-radius:14px;padding:26px 14px;text-align:center;min-height:240px;display:flex;flex-direction:column;justify-content:center;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .flash .big{font-size:42px;font-weight:800;} .flash .pin{font-size:19px;color:var(--accent);margin-top:10px;}
+  .flash .bp{font-size:20px;color:var(--accent2);margin-top:4px;} .flash .kn{font-size:21px;color:#ff9fb0;margin-top:4px;}
+  .flash .mean{font-size:18px;margin-top:10px;} .hidden{visibility:hidden;}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  select,input[type=text]{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px;font-size:16px;min-height:44px;}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;}
+  .q .stem{font-size:15px;margin-bottom:10px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:11px 12px;border-radius:6px;margin:5px 0;cursor:pointer;font-size:14px;min-height:44px;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .opt.correct{background:rgba(76,175,125,.22);border-color:var(--ok);}
+  .opt.wrong{background:rgba(226,96,79,.22);border-color:var(--ng);}
+  .exp{margin-top:10px;font-size:13px;display:none;background:var(--panel2);border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .exp.show{display:block;}
+  .exp .lbl{color:var(--accent2);font-size:11px;letter-spacing:.08em;margin-top:8px;}
+  .score{position:sticky;bottom:0;background:var(--panel2);border-top:1px solid var(--accent);padding:10px 14px;font-size:14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:11px;color:var(--sub);margin-right:6px;}
+  .bar{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));width:0;}
+  .tone{display:inline-block;min-width:18px;text-align:center;border-radius:4px;font-size:11px;font-weight:700;padding:0 4px;margin-left:2px;color:#06202e;}
+  .n1{background:var(--t1);} .n2{background:var(--t2);} .n3{background:var(--t3);} .n4{background:var(--t4);} .n5{background:var(--t5);}
+  .checkbox{display:flex;gap:8px;margin:7px 0;font-size:13px;}
+  .checkbox input{width:20px;height:20px;}
+  footer{text-align:center;color:var(--sub);font-size:11px;padding:20px;} ul{padding-left:20px;} li{margin:4px 0;}
+  #listArea table{display:block;overflow-x:auto;}
+  #listArea td{white-space:normal;}
+  @media (max-width:600px){
+    main{padding:12px 10px calc(90px + env(safe-area-inset-bottom));}
+    nav{gap:3px;padding:6px;} nav button{padding:8px 6px;font-size:12px;flex:1 1 30%;}
+    header h1{font-size:16px;} header p{font-size:11px;}
+    .flash{min-height:210px;padding:20px 10px;} .flash .big{font-size:36px;}
+    table{font-size:12px;} th,td{padding:5px 6px;}
+    #listArea th:nth-child(3),#listArea td:nth-child(3){display:none;}
+    .btn{width:calc(50% - 8px);}
+    h2{font-size:16px;}
+  }
+  @media (max-height:480px) and (orientation:landscape){
+    .flash{min-height:140px;padding:12px;} .flash .big{font-size:28px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>TOCFL Band A（入門基礎級）Level 2 トレーナー</h1>
+  <p>繁体字・ピンイン・注音・カタカナ・日本語訳をフル表示する独学用PWA（オフライン動作／進捗は端末に保存）</p>
+</header>
+
+<nav>
+  <button class="active" data-tab="t0">① 試験分析</button>
+  <button data-tab="t1">② 発音・声調</button>
+  <button data-tab="t2">③ 単語カード</button>
+  <button data-tab="t3">④ 単語リスト</button>
+  <button data-tab="t4">⑤ 文法・文型</button>
+  <button data-tab="t5">⑥ 問題演習</button>
+  <button data-tab="t6">⑦ 模擬試験</button>
+  <button data-tab="t7">⑧ 学習計画</button>
+</nav>
+
+<main>
+<section id="t0" class="active">
+  <h2>1. 合格条件</h2>
+  <div class="card">
+    <table>
+      <tr><th>項目</th><th>内容</th></tr>
+      <tr><td>構成</td><td>聴解50問（約60分）＋読解50問（約60分）＝計100問・約120分</td></tr>
+      <tr><td>配点</td><td>聴解80点／読解80点（計160点）</td></tr>
+      <tr><td>Level 2 基準</td><td>目安：聴解57点以上・読解60点以上</td></tr>
+      <tr><td>語彙量</td><td>Level 1＝約500語／<b>Level 2＝約1000語</b></td></tr>
+      <tr><td>標準学習時間</td><td>非中国語圏：480〜720時間</td></tr>
+    </table>
+    <p class="muted">※基準点は回次で微調整あり。本アプリは読解80点換算65点を安全圏目標として設計。</p>
+  </div>
+  <h2>2. 失点しやすい3大ポイント</h2>
+  <div class="card"><ul>
+    <li><b>声調</b>：聴解誤答の大半。②の声調ドリルを毎日。</li>
+    <li><b>数字</b>：値段・時刻・電話番号。「兩 liǎng」と「二 èr」。</li>
+    <li><b>語順・量詞</b>：主語＋時間＋場所＋方式＋動詞。</li>
+  </ul></div>
+  <h2>3. スマホでの使い方</h2>
+  <div class="card"><ul>
+    <li>ホーム画面に追加すると全画面アプリとして起動し、オフラインでも動作します。</li>
+    <li>単語カードはボタン操作で完結（スマホではキーボード操作は不要）。</li>
+    <li>進捗はこの端末のブラウザに保存されます。履歴消去で失われる点に注意。</li>
+  </ul></div>
+</section>
+
+<section id="t1">
+  <h2>1. 四声</h2>
+  <div class="card">
+    <table>
+      <tr><th>声調</th><th>記号</th><th>注音</th><th>カタカナ近似</th><th>例</th></tr>
+      <tr><td><span class="tone n1">1</span></td><td>ā</td><td>無印</td><td>マー（高く平ら）</td><td>媽 mā ㄇㄚ</td></tr>
+      <tr><td><span class="tone n2">2</span></td><td>á</td><td>ˊ</td><td>マ↗（聞き返す上昇）</td><td>麻 má ㄇㄚˊ</td></tr>
+      <tr><td><span class="tone n3">3</span></td><td>ǎ</td><td>ˇ</td><td>マ↘（低く沈める）</td><td>馬 mǎ ㄇㄚˇ</td></tr>
+      <tr><td><span class="tone n4">4</span></td><td>à</td><td>ˋ</td><td>マッ！（急降下）</td><td>罵 mà ㄇㄚˋ</td></tr>
+      <tr><td><span class="tone n5">軽</span></td><td>a</td><td>˙（前）</td><td>マ（軽く短く）</td><td>嗎 ma ˙ㄇㄚ</td></tr>
+    </table>
+  </div>
+  <h2>2. カタカナ表記の限界</h2>
+  <div class="card">
+    <table>
+      <tr><th>項目</th><th>内容</th></tr>
+      <tr><td>有気／無気</td><td>p t k q ch c は息を強く／b d g j zh z は息を抑える。濁音ではない</td></tr>
+      <tr><td>e（ㄜ）</td><td>「オ」と「ウ」の中間の曖昧母音</td></tr>
+      <tr><td>ü（ㄩ）</td><td>「イ」の口で「ユ」。本アプリでは「ュイ」と表記</td></tr>
+      <tr><td>-n／-ng</td><td>-n は舌先を歯茎へ、-ng は鼻に抜く。どちらも「ン」</td></tr>
+      <tr><td>台湾華語</td><td>そり舌が弱く、儿化はほぼ無い</td></tr>
+    </table>
+  </div>
+  <h2>3. 対照表</h2>
+  <div class="card" id="bpmfTable"></div>
+  <h2>4. 変調ルール</h2>
+  <div class="card">
+    <table>
+      <tr><th>規則</th><th>例</th></tr>
+      <tr><td>3声＋3声 → 前が2声</td><td>你好 nǐ hǎo → ní hǎo</td></tr>
+      <tr><td>3声＋他声調 → 半三声</td><td>很忙 hěn máng</td></tr>
+      <tr><td>不：4声の前で bú</td><td>不是 búshì</td></tr>
+      <tr><td>一：4声の前 yí／他 yì</td><td>一個 yíge／一起 yìqǐ</td></tr>
+    </table>
+  </div>
+  <h2>5. 声調ドリル</h2>
+  <div class="card"><button class="btn" id="toneNew">新しい問題</button><span class="pill" id="toneScore">正解 0 / 0</span></div>
+  <div id="toneArea"></div>
+</section>
+
+<section id="t2">
+  <h2>必須単語フラッシュカード</h2>
+  <div class="card"><div class="row">
+    <select id="catSel"></select>
+    <select id="modeSel">
+      <option value="zh2ja">繁体字 → 発音・意味</option>
+      <option value="ja2zh">日本語 → 繁体字</option>
+      <option value="py2zh">ピンイン → 繁体字</option>
+      <option value="kn2zh">カタカナ → 繁体字</option>
+    </select>
+    <label class="muted"><input type="checkbox" id="shuffleChk" checked> シャッフル</label>
+    <button class="btn sec" id="onlyWeak">苦手のみ</button>
+  </div></div>
+  <div class="flash" id="flashBox">
+    <div class="big" id="fFront">—</div>
+    <div class="pin hidden" id="fPin"></div>
+    <div class="bp hidden" id="fBp"></div>
+    <div class="kn hidden" id="fKn"></div>
+    <div class="mean hidden" id="fBack"></div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="btnFlip">答えを見る</button>
+    <button class="btn warn" id="btnNg">覚えていない</button>
+    <button class="btn" id="btnOk" style="background:var(--ok);color:#042014">覚えた</button>
+    <button class="btn sec" id="btnPrev">戻る</button>
+  </div>
+  <div class="card">
+    <div class="row"><span id="progText" class="muted">0 / 0</span></div>
+    <div class="bar"><i id="progBar"></i></div>
+    <p class="muted" id="weakInfo">苦手登録：0語</p>
+    <button class="btn sec" id="resetProg">進捗リセット</button>
+  </div>
+</section>
+
+<section id="t3">
+  <h2>カテゴリ別 必須語彙リスト</h2>
+  <div class="card"><div class="row">
+    <input type="text" id="search" placeholder="繁体字・ピンイン・カタカナ・日本語で検索">
+    <select id="catSel2"></select><span class="muted" id="countInfo"></span>
+  </div></div>
+  <div id="listArea"></div>
+</section>
+
+<section id="t4">
+  <h2>Level 2 必須文法・文型 40</h2>
+  <div id="gramArea"></div>
+</section>
+
+<section id="t5">
+  <h2>分野別 問題演習</h2>
+  <div class="card"><div class="row">
+    <select id="qCat"></select>
+    <button class="btn" id="qStart">出題</button>
+    <button class="btn sec" id="qAllExp">全解説表示</button>
+  </div>
+  <p class="muted">解答すると、完成文・ピンイン・注音・カタカナ・日本語訳・キーワードが表示されます。</p></div>
+  <div id="quizArea"></div>
+  <div class="score" id="quizScore">正解 0 / 解答 0（正答率 —）</div>
+</section>
+
+<section id="t6">
+  <h2>読解ミニ模擬試験（25問）</h2>
+  <div class="card">
+    <p class="muted">本番は50問60分（1問72秒）。25問を25分以内で。</p>
+    <button class="btn" id="mockStart">模試開始</button>
+    <button class="btn sec" id="mockFinish">採点する</button>
+    <span id="timer" class="pill">00:00</span>
+  </div>
+  <div id="mockArea"></div>
+  <div id="mockResult" class="card" style="display:none"></div>
+</section>
+
+<section id="t7">
+  <h2>12週間 ロードマップ</h2>
+  <div class="card">
+    <table>
+      <tr><th>週</th><th>発音・語彙</th><th>文法</th><th>演習</th></tr>
+      <tr><td>1–2</td><td>カタカナで口慣らし→注音暗記＋基礎400語</td><td>①〜⑩</td><td>声調ドリル／基礎文型</td></tr>
+      <tr><td>3–4</td><td>+200語</td><td>⑪〜⑳</td><td>量詞／アスペクト</td></tr>
+      <tr><td>5–6</td><td>+200語／カタカナを外す</td><td>㉑〜㉚</td><td>補語／語順</td></tr>
+      <tr><td>7–8</td><td>+200語</td><td>㉛〜㊵</td><td>複文／短文読解</td></tr>
+      <tr><td>9–10</td><td>全語彙2周</td><td>例文50本暗唱</td><td>模試×3</td></tr>
+      <tr><td>11–12</td><td>苦手語のみ毎日100語</td><td>誤答潰し</td><td>本番形式</td></tr>
+    </table>
+  </div>
+  <h3>データの保存と移行</h3>
+  <div class="card">
+    <p class="muted">進捗（苦手単語・チェックリスト）はこの端末に保存されます。機種変更やPC↔スマホの移行は下のボタンで。</p>
+    <button class="btn sec" id="btnExport">進捗を書き出す</button>
+    <button class="btn sec" id="btnImport">進捗を読み込む</button>
+    <textarea id="ioBox" style="width:100%;height:90px;margin-top:8px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:12px;" placeholder="ここにJSONが出力されます／貼り付けて読み込み"></textarea>
+  </div>
+  <h3>チェックリスト</h3>
+  <div class="card" id="checkArea"></div>
+</section>
+</main>
+<footer>TOCFL A2 Trainer / オフライン動作・外部通信なし<br><span id="swState" class="muted"></span></footer>
+
+<script>
+/* ===== ピンイン解析 ===== */
+const TM={'ā':['a',1],'á':['a',2],'ǎ':['a',3],'à':['a',4],'ē':['e',1],'é':['e',2],'ě':['e',3],'è':['e',4],'ī':['i',1],'í':['i',2],'ǐ':['i',3],'ì':['i',4],'ō':['o',1],'ó':['o',2],'ǒ':['o',3],'ò':['o',4],'ū':['u',1],'ú':['u',2],'ǔ':['u',3],'ù':['u',4],'ǖ':['ü',1],'ǘ':['ü',2],'ǚ':['ü',3],'ǜ':['ü',4]};
+function strip(s){let t=0,o='';for(const c of s){if(TM[c]){o+=TM[c][0];t=TM[c][1];}else o+=c;}return[o.toLowerCase(),t||5];}
+function split2(s){let i='',f=s;for(const k of['zh','ch','sh'])if(s.startsWith(k)){i=k;f=s.slice(2);}
+ if(!i){const c=s[0];if('bpmfdtnlgkhjqxrzcs'.includes(c)&&s.length>1){i=c;f=s.slice(1);}}
+ if(['j','q','x'].includes(i))f=f.replace(/^u/,'ü').replace(/^v/,'ü');return[i,f];}
+const IB={'zh':'ㄓ','ch':'ㄔ','sh':'ㄕ','b':'ㄅ','p':'ㄆ','m':'ㄇ','f':'ㄈ','d':'ㄉ','t':'ㄊ','n':'ㄋ','l':'ㄌ','g':'ㄍ','k':'ㄎ','h':'ㄏ','j':'ㄐ','q':'ㄑ','x':'ㄒ','r':'ㄖ','z':'ㄗ','c':'ㄘ','s':'ㄙ'};
+const FB={'a':'ㄚ','o':'ㄛ','e':'ㄜ','ai':'ㄞ','ei':'ㄟ','ao':'ㄠ','ou':'ㄡ','an':'ㄢ','en':'ㄣ','ang':'ㄤ','eng':'ㄥ','er':'ㄦ','i':'ㄧ','ia':'ㄧㄚ','ie':'ㄧㄝ','iao':'ㄧㄠ','iu':'ㄧㄡ','ian':'ㄧㄢ','in':'ㄧㄣ','iang':'ㄧㄤ','ing':'ㄧㄥ','iong':'ㄩㄥ','u':'ㄨ','ua':'ㄨㄚ','uo':'ㄨㄛ','uai':'ㄨㄞ','ui':'ㄨㄟ','uan':'ㄨㄢ','un':'ㄨㄣ','uang':'ㄨㄤ','ong':'ㄨㄥ','ü':'ㄩ','üe':'ㄩㄝ','üan':'ㄩㄢ','ün':'ㄩㄣ'};
+const WB={'yi':'ㄧ','ya':'ㄧㄚ','ye':'ㄧㄝ','yao':'ㄧㄠ','you':'ㄧㄡ','yan':'ㄧㄢ','yin':'ㄧㄣ','yang':'ㄧㄤ','ying':'ㄧㄥ','yong':'ㄩㄥ','yu':'ㄩ','yue':'ㄩㄝ','yuan':'ㄩㄢ','yun':'ㄩㄣ','wu':'ㄨ','wa':'ㄨㄚ','wo':'ㄨㄛ','wai':'ㄨㄞ','wei':'ㄨㄟ','wan':'ㄨㄢ','wen':'ㄨㄣ','wang':'ㄨㄤ','weng':'ㄨㄥ','zhi':'ㄓ','chi':'ㄔ','shi':'ㄕ','ri':'ㄖ','zi':'ㄗ','ci':'ㄘ','si':'ㄙ','er':'ㄦ','e':'ㄜ','a':'ㄚ','ai':'ㄞ','ei':'ㄟ','ao':'ㄠ','ou':'ㄡ','an':'ㄢ','en':'ㄣ','ang':'ㄤ','eng':'ㄥ','o':'ㄛ'};
+const MK={1:'',2:'ˊ',3:'ˇ',4:'ˋ',5:''};
+function sB(r){const[s,t]=strip(r);if(!s)return'';let b;if(WB[s])b=WB[s];else{const[i,f]=split2(s);b=(IB[i]||'')+(FB[f]||f);}return(t===5?'˙':'')+b+(t===5?'':MK[t]);}
+const HD={'b':['バ','ビ','ブ','ベ','ボ'],'p':['パ','ピ','プ','ペ','ポ'],'m':['マ','ミ','ム','メ','モ'],'f':['ファ','フィ','フ','フェ','フォ'],'d':['ダ','ディ','ドゥ','デ','ド'],'t':['タ','ティ','トゥ','テ','ト'],'n':['ナ','ニ','ヌ','ネ','ノ'],'l':['ラ','リ','ル','レ','ロ'],'g':['ガ','ギ','グ','ゲ','ゴ'],'k':['カ','キ','ク','ケ','コ'],'h':['ハ','ヒ','フ','ヘ','ホ'],'j':['ジャ','ジ','ジュ','ジェ','ジョ'],'q':['チャ','チ','チュ','チェ','チョ'],'x':['シャ','シ','シュ','シェ','ショ'],'zh':['ジャ','ジ','ジュ','ジェ','ジョ'],'ch':['チャ','チ','チュ','チェ','チョ'],'sh':['シャ','シ','シュ','シェ','ショ'],'r':['ラ','リ','ル','レ','ロ'],'z':['ザ','ジ','ズ','ゼ','ゾ'],'c':['ツァ','ツィ','ツ','ツェ','ツォ'],'s':['サ','シ','ス','セ','ソ'],'':['ア','イ','ウ','エ','オ']};
+const WK={'yi':'イー','ya':'ヤ','ye':'イエ','yao':'ヤオ','you':'ヨウ','yan':'イエン','yin':'イン','yang':'ヤン','ying':'イン','yong':'ヨン','yu':'ユイ','yue':'ユエ','yuan':'ユエン','yun':'ユン','wu':'ウー','wa':'ワ','wo':'ウオ','wai':'ワイ','wei':'ウェイ','wan':'ワン','wen':'ウェン','wang':'ワン','weng':'ウォン','zhi':'ジー','chi':'チー','shi':'シー','ri':'リー','zi':'ズー','ci':'ツー','si':'スー','er':'アル','e':'オ','a':'ア','o':'オ','ai':'アイ','ei':'エイ','ao':'アオ','ou':'オウ','an':'アン','en':'エン','ang':'アン','eng':'オン'};
+const VI={a:0,i:1,u:2,e:3,o:4};
+function sK(r){const[s]=strip(r);if(!s)return'';if(WK[s])return WK[s];const[i,f]=split2(s);const h=HD[i]||HD[''],H=x=>h[VI[x]];
+ const T={'a':()=>H('a'),'o':()=>H('o'),'e':()=>H('o'),'ai':()=>H('a')+'イ','ei':()=>H('e')+'イ','ao':()=>H('a')+'オ','ou':()=>H('o')+'ウ','an':()=>H('a')+'ン','en':()=>H('e')+'ン','ang':()=>H('a')+'ン','eng':()=>H('o')+'ン','er':()=>'アル','i':()=>H('i'),'ia':()=>H('i')+'ア','ie':()=>H('i')+'エ','iao':()=>H('i')+'アオ','iu':()=>H('i')+'ウ','ian':()=>H('i')+'エン','in':()=>H('i')+'ン','iang':()=>H('i')+'アン','ing':()=>H('i')+'ン','iong':()=>H('i')+'オン','u':()=>H('u'),'ua':()=>H('u')+'ア','uo':()=>H('u')+'オ','uai':()=>H('u')+'アイ','ui':()=>H('u')+'エイ','uan':()=>H('u')+'アン','un':()=>H('u')+'ン','uang':()=>H('u')+'アン','ong':()=>H('o')+'ン','ü':()=>H('i')+'ュイ','üe':()=>H('i')+'ュエ','üan':()=>H('i')+'ュエン','ün':()=>H('i')+'ュン'};
+ return T[f]?T[f]():H('a');}
+const toB=p=>p.split(/([\s\/／])/).map(x=>/^[\s\/／]$/.test(x)?x:sB(x)).join('');
+const toK=p=>p.split(/([\s\/／])/).map(x=>/^[\s\/／]$/.test(x)?(x==='/'?' / ':''):sK(x)).join('');
+const tn=p=>p.split(/\s+/).filter(Boolean).map(x=>strip(x)[1]);
+const tb=p=>tn(p).map(n=>`<span class="tone n${n}">${n===5?'軽':n}</span>`).join('');
+
+/* ===== 語彙 ===== */
+const RAW=[
+["我","wǒ","私","代名詞・基本"],["你","nǐ","あなた","代名詞・基本"],["您","nín","あなた（敬称）","代名詞・基本"],["他","tā","彼","代名詞・基本"],["她","tā","彼女","代名詞・基本"],["我們","wǒ men","私たち","代名詞・基本"],["他們","tā men","彼ら","代名詞・基本"],["這","zhè","これ","代名詞・基本"],["那","nà","あれ","代名詞・基本"],["哪","nǎ","どれ","代名詞・基本"],["這裡","zhè lǐ","ここ","代名詞・基本"],["那裡","nà lǐ","あそこ","代名詞・基本"],["哪裡","nǎ lǐ","どこ","代名詞・基本"],["誰","shéi","誰","代名詞・基本"],["什麼","shén me","何","代名詞・基本"],["怎麼","zěn me","どのように","代名詞・基本"],["為什麼","wèi shén me","なぜ","代名詞・基本"],["多少","duō shǎo","いくつ・いくら","代名詞・基本"],["幾","jǐ","いくつ","代名詞・基本"],["自己","zì jǐ","自分","代名詞・基本"],["大家","dà jiā","みなさん","代名詞・基本"],
+["是","shì","〜である","動詞・基本"],["有","yǒu","ある・持つ","動詞・基本"],["在","zài","〜にいる/ある","動詞・基本"],["去","qù","行く","動詞・基本"],["來","lái","来る","動詞・基本"],["回","huí","帰る","動詞・基本"],["吃","chī","食べる","動詞・基本"],["喝","hē","飲む","動詞・基本"],["看","kàn","見る・読む","動詞・基本"],["聽","tīng","聞く","動詞・基本"],["說","shuō","話す","動詞・基本"],["寫","xiě","書く","動詞・基本"],["買","mǎi","買う","動詞・基本"],["賣","mài","売る","動詞・基本"],["做","zuò","する・作る","動詞・基本"],["工作","gōng zuò","働く・仕事","動詞・基本"],["學習","xué xí","学ぶ","動詞・基本"],["住","zhù","住む","動詞・基本"],["走","zǒu","歩く","動詞・基本"],["坐","zuò","座る・乗る","動詞・基本"],["給","gěi","あげる","動詞・基本"],["找","zhǎo","探す","動詞・基本"],["等","děng","待つ","動詞・基本"],["開","kāi","開ける・運転する","動詞・基本"],["關","guān","閉める","動詞・基本"],["用","yòng","使う","動詞・基本"],["幫","bāng","手伝う","動詞・基本"],["叫","jiào","呼ぶ","動詞・基本"],["認識","rèn shi","知り合う","動詞・基本"],["知道","zhī dào","知っている","動詞・基本"],["覺得","jué de","〜と思う","動詞・基本"],["希望","xī wàng","望む","動詞・基本"],["準備","zhǔn bèi","準備する","動詞・基本"],["休息","xiū xi","休む","動詞・基本"],["介紹","jiè shào","紹介する","動詞・基本"],["打電話","dǎ diàn huà","電話をかける","動詞・基本"],
+["爸爸","bà ba","父","家族・人"],["媽媽","mā ma","母","家族・人"],["哥哥","gē ge","兄","家族・人"],["姐姐","jiě jie","姉","家族・人"],["弟弟","dì di","弟","家族・人"],["妹妹","mèi mei","妹","家族・人"],["兒子","ér zi","息子","家族・人"],["女兒","nǚ ér","娘","家族・人"],["先生","xiān sheng","〜さん（男性）・夫","家族・人"],["太太","tài tai","奥さん","家族・人"],["小姐","xiǎo jiě","〜さん（女性）","家族・人"],["朋友","péng yǒu","友達","家族・人"],["同學","tóng xué","クラスメイト","家族・人"],["同事","tóng shì","同僚","家族・人"],["老師","lǎo shī","先生","家族・人"],["學生","xué shēng","学生","家族・人"],["醫生","yī shēng","医者","家族・人"],["孩子","hái zi","子ども","家族・人"],["名字","míng zi","名前","家族・人"],
+["一","yī","1","数・時間"],["二","èr","2（単独）","数・時間"],["兩","liǎng","2（量詞の前）","数・時間"],["三","sān","3","数・時間"],["十","shí","10","数・時間"],["百","bǎi","百","数・時間"],["千","qiān","千","数・時間"],["萬","wàn","万","数・時間"],["零","líng","ゼロ","数・時間"],["半","bàn","半分","数・時間"],["點","diǎn","〜時","数・時間"],["分","fēn","〜分","数・時間"],["小時","xiǎo shí","〜時間","数・時間"],["今天","jīn tiān","今日","数・時間"],["明天","míng tiān","明日","数・時間"],["昨天","zuó tiān","昨日","数・時間"],["早上","zǎo shang","朝","数・時間"],["中午","zhōng wǔ","昼","数・時間"],["下午","xià wǔ","午後","数・時間"],["晚上","wǎn shang","夜","数・時間"],["星期","xīng qí","週・曜日","数・時間"],["禮拜","lǐ bài","週（台湾口語）","数・時間"],["月","yuè","月","数・時間"],["年","nián","年","数・時間"],["號","hào","〜日（日付）","数・時間"],["現在","xiàn zài","今","数・時間"],["以前","yǐ qián","以前","数・時間"],["以後","yǐ hòu","以後","数・時間"],["最近","zuì jìn","最近","数・時間"],
+["個","ge","〜個","量詞"],["張","zhāng","枚","量詞"],["本","běn","冊","量詞"],["杯","bēi","杯","量詞"],["瓶","píng","本（瓶）","量詞"],["件","jiàn","着・件","量詞"],["條","tiáo","本（細長い）","量詞"],["隻","zhī","匹","量詞"],["輛","liàng","台（車）","量詞"],["台","tái","台（機械）","量詞"],["雙","shuāng","足・対","量詞"],["碗","wǎn","杯（丼）","量詞"],["塊","kuài","元（口語）","量詞"],["次","cì","回","量詞"],["歲","suì","歳","量詞"],["位","wèi","名（敬意）","量詞"],["家","jiā","軒（店）","量詞"],
+["吃飯","chī fàn","食事する","飲食・買物"],["早餐","zǎo cān","朝食","飲食・買物"],["晚餐","wǎn cān","夕食","飲食・買物"],["飯","fàn","ご飯","飲食・買物"],["麵","miàn","麺","飲食・買物"],["水","shuǐ","水","飲食・買物"],["茶","chá","お茶","飲食・買物"],["咖啡","kā fēi","コーヒー","飲食・買物"],["牛奶","niú nǎi","牛乳","飲食・買物"],["水果","shuǐ guǒ","果物","飲食・買物"],["魚","yú","魚","飲食・買物"],["青菜","qīng cài","野菜","飲食・買物"],["便當","biàn dāng","弁当","飲食・買物"],["好吃","hǎo chī","おいしい","飲食・買物"],["餓","è","お腹が空く","飲食・買物"],["渴","kě","喉が渇く","飲食・買物"],["菜單","cài dān","メニュー","飲食・買物"],["錢","qián","お金","飲食・買物"],["元","yuán","元","飲食・買物"],["便宜","pián yí","安い","飲食・買物"],["貴","guì","高い","飲食・買物"],["多少錢","duō shǎo qián","いくら","飲食・買物"],["商店","shāng diàn","店","飲食・買物"],["超市","chāo shì","スーパー","飲食・買物"],["夜市","yè shì","夜市","飲食・買物"],["發票","fā piào","レシート","飲食・買物"],
+["學校","xué xiào","学校","場所・交通"],["教室","jiào shì","教室","場所・交通"],["公司","gōng sī","会社","場所・交通"],["家","jiā","家","場所・交通"],["房間","fáng jiān","部屋","場所・交通"],["廁所","cè suǒ","トイレ","場所・交通"],["醫院","yī yuàn","病院","場所・交通"],["銀行","yín háng","銀行","場所・交通"],["郵局","yóu jú","郵便局","場所・交通"],["公園","gōng yuán","公園","場所・交通"],["圖書館","tú shū guǎn","図書館","場所・交通"],["餐廳","cān tīng","レストラン","場所・交通"],["機場","jī chǎng","空港","場所・交通"],["火車站","huǒ chē zhàn","駅","場所・交通"],["捷運","jié yùn","MRT","場所・交通"],["公車","gōng chē","バス","場所・交通"],["計程車","jì chéng chē","タクシー","場所・交通"],["腳踏車","jiǎo tà chē","自転車","場所・交通"],["飛機","fēi jī","飛行機","場所・交通"],["上面","shàng miàn","上","場所・交通"],["下面","xià miàn","下","場所・交通"],["前面","qián miàn","前","場所・交通"],["後面","hòu miàn","後ろ","場所・交通"],["裡面","lǐ miàn","中","場所・交通"],["外面","wài miàn","外","場所・交通"],["旁邊","páng biān","そば","場所・交通"],["對面","duì miàn","向かい","場所・交通"],["右邊","yòu biān","右","場所・交通"],["左邊","zuǒ biān","左","場所・交通"],["附近","fù jìn","近く","場所・交通"],
+["好","hǎo","良い","形容詞・副詞"],["大","dà","大きい","形容詞・副詞"],["小","xiǎo","小さい","形容詞・副詞"],["多","duō","多い","形容詞・副詞"],["少","shǎo","少ない","形容詞・副詞"],["新","xīn","新しい","形容詞・副詞"],["舊","jiù","古い","形容詞・副詞"],["快","kuài","速い","形容詞・副詞"],["慢","màn","遅い","形容詞・副詞"],["遠","yuǎn","遠い","形容詞・副詞"],["近","jìn","近い","形容詞・副詞"],["熱","rè","暑い","形容詞・副詞"],["冷","lěng","寒い","形容詞・副詞"],["忙","máng","忙しい","形容詞・副詞"],["累","lèi","疲れた","形容詞・副詞"],["高興","gāo xìng","嬉しい","形容詞・副詞"],["漂亮","piào liang","きれい","形容詞・副詞"],["方便","fāng biàn","便利","形容詞・副詞"],["重要","zhòng yào","重要","形容詞・副詞"],["容易","róng yì","簡単","形容詞・副詞"],["難","nán","難しい","形容詞・副詞"],["很","hěn","とても","形容詞・副詞"],["太","tài","〜すぎる","形容詞・副詞"],["非常","fēi cháng","非常に","形容詞・副詞"],["比較","bǐ jiào","比較的","形容詞・副詞"],["最","zuì","最も","形容詞・副詞"],["也","yě","も","形容詞・副詞"],["都","dōu","みな","形容詞・副詞"],["還","hái","まだ・さらに","形容詞・副詞"],["再","zài","再び","形容詞・副詞"],["就","jiù","すぐに・ならば","形容詞・副詞"],["才","cái","やっと","形容詞・副詞"],["已經","yǐ jīng","すでに","形容詞・副詞"],["常常","cháng cháng","よく","形容詞・副詞"],["一起","yì qǐ","一緒に","形容詞・副詞"],["一定","yí dìng","きっと","形容詞・副詞"],["可能","kě néng","かもしれない","形容詞・副詞"],["馬上","mǎ shàng","すぐに","形容詞・副詞"],
+["會","huì","〜できる（習得）","助動詞・機能語"],["能","néng","〜できる（条件）","助動詞・機能語"],["可以","kě yǐ","〜してよい","助動詞・機能語"],["要","yào","〜したい・必要だ","助動詞・機能語"],["想","xiǎng","〜したい","助動詞・機能語"],["應該","yīng gāi","〜すべき","助動詞・機能語"],["喜歡","xǐ huān","好き","助動詞・機能語"],["不","bù","〜ない","助動詞・機能語"],["沒","méi","〜ていない","助動詞・機能語"],["嗎","ma","〜か","助動詞・機能語"],["呢","ne","〜は？","助動詞・機能語"],["吧","ba","〜でしょう","助動詞・機能語"],["了","le","完了・変化","助動詞・機能語"],["過","guò","経験","助動詞・機能語"],["著","zhe","持続","助動詞・機能語"],["的","de","〜の","助動詞・機能語"],["得","de","様態補語","助動詞・機能語"],["把","bǎ","〜を（処置）","助動詞・機能語"],["被","bèi","〜される","助動詞・機能語"],["跟","gēn","〜と","助動詞・機能語"],["和","hàn","と","助動詞・機能語"],["對","duì","正しい・〜に対して","助動詞・機能語"],["從","cóng","〜から","助動詞・機能語"],["到","dào","〜まで","助動詞・機能語"],["離","lí","〜から（距離）","助動詞・機能語"],["比","bǐ","〜より","助動詞・機能語"],["因為","yīn wèi","なぜなら","助動詞・機能語"],["所以","suǒ yǐ","だから","助動詞・機能語"],["但是","dàn shì","しかし","助動詞・機能語"],["雖然","suī rán","〜だけれども","助動詞・機能語"],["如果","rú guǒ","もし","助動詞・機能語"],["先","xiān","まず","助動詞・機能語"],["然後","rán hòu","それから","助動詞・機能語"],["一邊","yì biān","〜しながら","助動詞・機能語"],
+["天氣","tiān qì","天気","生活・その他"],["下雨","xià yǔ","雨が降る","生活・その他"],["颱風","tái fēng","台風","生活・その他"],["身體","shēn tǐ","体","生活・その他"],["眼睛","yǎn jīng","目","生活・その他"],["生病","shēng bìng","病気になる","生活・その他"],["藥","yào","薬","生活・その他"],["運動","yùn dòng","運動する","生活・その他"],["旅行","lǚ xíng","旅行する","生活・その他"],["電影","diàn yǐng","映画","生活・その他"],["音樂","yīn yuè","音楽","生活・その他"],["電腦","diàn nǎo","パソコン","生活・その他"],["手機","shǒu jī","携帯電話","生活・その他"],["網路","wǎng lù","インターネット","生活・その他"],["衣服","yī fú","服","生活・その他"],["鞋子","xié zi","靴","生活・その他"],["書","shū","本","生活・その他"],["問題","wèn tí","問題","生活・その他"],["時間","shí jiān","時間","生活・その他"],["謝謝","xiè xie","ありがとう","生活・その他"],["對不起","duì bù qǐ","ごめんなさい","生活・その他"],["沒關係","méi guān xi","大丈夫","生活・その他"],["請問","qǐng wèn","お尋ねします","生活・その他"],["不好意思","bù hǎo yì si","すみません","生活・その他"],["再見","zài jiàn","さようなら","生活・その他"]];
+const VOCAB=RAW.map(v=>({zh:v[0],py:v[1],ja:v[2],cat:v[3],bp:toB(v[1]),kn:toK(v[1]),tnn:tn(v[1])}));
+
+/* ===== 文法 ===== */
+const GRAMMAR=[
+["① 是構文","我是日本人。","wǒ shì rì běn rén","私は日本人です。","否定は「不是 bú shì」。"],
+["② 形容詞述語文","今天很熱。","jīn tiān hěn rè","今日は暑い。","肯定では「很」を置く。"],
+["③ 有構文","桌子上有一本書。","zhuō zi shàng yǒu yì běn shū","机の上に本が1冊ある。","否定は「沒有」。"],
+["④ 在構文","他在家。","tā zài jiā","彼は家にいる。","主語＋在＋場所。"],
+["⑤ 嗎疑問文","你是學生嗎？","nǐ shì xué shēng ma","あなたは学生ですか。","疑問詞がある文には不可。"],
+["⑥ 正反疑問文","你去不去？","nǐ qù bú qù","行きますか。","二音節は「喜不喜歡」。"],
+["⑦ 疑問詞疑問文","你要什麼？","nǐ yào shén me","何が要りますか。","語順は平叙文のまま。"],
+["⑧ 省略疑問 呢","我很好，你呢？","wǒ hěn hǎo nǐ ne","私は元気、あなたは？","述語を省略。"],
+["⑨ 選択疑問 還是","你喝茶還是咖啡？","nǐ hē chá hái shì kā fēi","お茶とコーヒーどちら？","平叙文では「或是」。"],
+["⑩ 連体修飾 的","這是我的書。","zhè shì wǒ de shū","これは私の本です。","親族・所属は省略可。"],
+["⑪ 量詞","三本書","sān běn shū","本3冊","2は量詞の前で「兩」。"],
+["⑫ 指示詞＋量詞","這個人","zhè ge rén","この人","量詞の省略不可。"],
+["⑬ 完了の 了","我吃了一個便當。","wǒ chī le yí ge biàn dāng","弁当を1つ食べた。","否定は「沒吃」。"],
+["⑭ 変化の 了","下雨了。","xià yǔ le","雨が降ってきた。","状況の変化。"],
+["⑮ 経験の 過","我去過台灣。","wǒ qù guò tái wān","台湾に行ったことがある。","否定は「沒去過」。"],
+["⑯ 持続の 著","門開著。","mén kāi zhe","ドアが開いている。","状態の持続。"],
+["⑰ 進行の 在","我在看電視。","wǒ zài kàn diàn shì","テレビを見ている。","文末に「呢」も可。"],
+["⑱ 時間詞の位置","我明天去台北。","wǒ míng tiān qù tái běi","明日台北に行く。","時間詞は動詞の前。"],
+["⑲ 在＋場所＋V","我在圖書館看書。","wǒ zài tú shū guǎn kàn shū","図書館で本を読む。","場所は動詞の前。"],
+["⑳ 時量補語","我學了兩年中文。","wǒ xué le liǎng nián zhōng wén","中国語を2年学んだ。","動詞の後ろ。"],
+["㉑ 動量補語","我去過三次。","wǒ qù guò sān cì","3回行ったことがある。","回数は動詞の後ろ。"],
+["㉒ 比較 比","他比我高。","tā bǐ wǒ gāo","彼は私より背が高い。","程度副詞は使えない。"],
+["㉓ 同等比較","我跟他一樣高。","wǒ gēn tā yí yàng gāo","彼と同じ背丈だ。","否定比較は「沒有」。"],
+["㉔ 最上級","這家店最好吃。","zhè jiā diàn zuì hǎo chī","この店が一番おいしい。","最＋形容詞。"],
+["㉕ 能願動詞","我會說中文。","wǒ huì shuō zhōng wén","中国語が話せる。","會/能/可以の区別。"],
+["㉖ 想／要","我想喝茶。","wǒ xiǎng hē chá","お茶が飲みたい。","「不要」は禁止。"],
+["㉗ 連動文","我坐捷運去公司。","wǒ zuò jié yùn qù gōng sī","MRTで会社に行く。","動作の順に並べる。"],
+["㉘ 兼語文","老師叫我回答。","lǎo shī jiào wǒ huí dá","先生が私に答えさせる。","V1の目的語がV2の主語。"],
+["㉙ 様態補語 得","他說得很快。","tā shuō de hěn kuài","彼は話すのが速い。","目的語があれば動詞反復。"],
+["㉚ 結果補語","我看完了。","wǒ kàn wán le","読み終えた。","完/懂/到/見。"],
+["㉛ 方向補語","請拿出來。","qǐng ná chū lái","出してください。","来/去＋進出上下。"],
+["㉜ 可能補語","我聽不懂。","wǒ tīng bù dǒng","聞き取れない。","得/不を挟む。"],
+["㉝ 把構文","請把門關上。","qǐng bǎ mén guān shàng","ドアを閉めてください。","動詞は裸では使えない。"],
+["㉞ 被構文","我的手機被偷了。","wǒ de shǒu jī bèi tōu le","携帯を盗まれた。","動作主は省略可。"],
+["㉟ 存現文","前面來了一個人。","qián miàn lái le yí ge rén","前から人が1人来た。","場所＋動詞＋不特定。"],
+["㊱ 因為…所以…","因為下雨，所以我沒去。","yīn wèi xià yǔ suǒ yǐ wǒ méi qù","雨なので行かなかった。","片方のみでも可。"],
+["㊲ 雖然…但是…","雖然很貴，但是很好吃。","suī rán hěn guì dàn shì hěn hǎo chī","高いけどおいしい。","両方残すのが自然。"],
+["㊳ 如果…就…","如果你有空，就來我家。","rú guǒ nǐ yǒu kòng jiù lái wǒ jiā","暇ならうちに来て。","「的話」も可。"],
+["㊴ 先…然後…","先吃飯，然後看電影。","xiān chī fàn rán hòu kàn diàn yǐng","先に食事、その後映画。","同時は「一邊…一邊…」。"],
+["㊵ 離／從…到…","我家離公司很近。","wǒ jiā lí gōng sī hěn jìn","家は会社から近い。","離＝距離、從＝起点。"]
+].map(g=>({t:g[0],ex:g[1],py:g[2],ja:g[3],note:g[4],bp:toB(g[2]),kn:toK(g[2])}));
+
+/* ===== 問題 ===== */
+const QUIZ=[
+{c:"基礎文型",q:"他（　）我的同事。",o:["是","有","在","很"],a:0,e:"名詞と名詞をつなぐのは「是」。",s:"他是我的同事。",p:"tā shì wǒ de tóng shì",j:"彼は私の同僚です。",k:["是|shì|〜である","同事|tóng shì|同僚","的|de|〜の"]},
+{c:"基礎文型",q:"桌子上（　）三本書。",o:["是","有","在","到"],a:1,e:"存在文は「場所＋有＋不特定の物」。",s:"桌子上有三本書。",p:"zhuō zi shàng yǒu sān běn shū",j:"机の上に本が3冊あります。",k:["桌子|zhuō zi|机","有|yǒu|ある","本|běn|冊（量詞）","書|shū|本"]},
+{c:"基礎文型",q:"我的手機（　）房間裡。",o:["有","是","在","會"],a:2,e:"特定の物の所在は「在」。",s:"我的手機在房間裡。",p:"wǒ de shǒu jī zài fáng jiān lǐ",j:"私の携帯は部屋の中にあります。",k:["手機|shǒu jī|携帯電話","在|zài|〜にある","房間|fáng jiān|部屋","裡|lǐ|中"]},
+{c:"基礎文型",q:"今天（　）熱。",o:["是","很","有","的"],a:1,e:"形容詞述語文は「很」を伴う。",s:"今天很熱。",p:"jīn tiān hěn rè",j:"今日はとても暑いです。",k:["今天|jīn tiān|今日","很|hěn|とても","熱|rè|暑い"]},
+{c:"基礎文型",q:"我（　）有時間。（否定）",o:["不","沒","別","無"],a:1,e:"「有」の否定は「沒」のみ。",s:"我沒有時間。",p:"wǒ méi yǒu shí jiān",j:"私は時間がありません。",k:["沒有|méi yǒu|ない","時間|shí jiān|時間"]},
+{c:"基礎文型",q:"你要喝茶（　）咖啡？",o:["和","或者","還是","跟"],a:2,e:"疑問文の選択は「還是」。",s:"你要喝茶還是咖啡？",p:"nǐ yào hē chá hái shì kā fēi",j:"お茶とコーヒー、どちらを飲みますか。",k:["喝|hē|飲む","茶|chá|お茶","還是|hái shì|それとも","咖啡|kā fēi|コーヒー"]},
+{c:"量詞",q:"我買了兩（　）衣服。",o:["個","件","張","本"],a:1,e:"衣類は「件」。",s:"我買了兩件衣服。",p:"wǒ mǎi le liǎng jiàn yī fú",j:"私は服を2着買いました。",k:["買|mǎi|買う","兩|liǎng|2（量詞の前）","件|jiàn|着","衣服|yī fú|服"]},
+{c:"量詞",q:"請給我一（　）咖啡。",o:["碗","杯","瓶","隻"],a:1,e:"カップ入りの飲み物は「杯」。",s:"請給我一杯咖啡。",p:"qǐng gěi wǒ yì bēi kā fēi",j:"コーヒーを1杯ください。",k:["請|qǐng|どうぞ","給|gěi|与える","杯|bēi|杯"]},
+{c:"量詞",q:"他有三（　）車。",o:["台","輛","條","雙"],a:1,e:"自動車は「輛」（台湾口語では「台」も）。",s:"他有三輛車。",p:"tā yǒu sān liàng chē",j:"彼は車を3台持っています。",k:["輛|liàng|台（車）","車|chē|車"]},
+{c:"量詞",q:"這（　）照片很漂亮。",o:["本","張","件","隻"],a:1,e:"紙・平面は「張」。",s:"這張照片很漂亮。",p:"zhè zhāng zhào piàn hěn piào liang",j:"この写真はとてもきれいです。",k:["張|zhāng|枚","照片|zhào piàn|写真","漂亮|piào liang|きれい"]},
+{c:"量詞",q:"我家有一（　）狗。",o:["個","隻","頭","條"],a:1,e:"小動物は「隻」。",s:"我家有一隻狗。",p:"wǒ jiā yǒu yì zhī gǒu",j:"うちには犬が1匹います。",k:["家|jiā|家","隻|zhī|匹","狗|gǒu|犬"]},
+{c:"アスペクト",q:"我昨天（　）一部電影。",o:["看了","看過","看著","在看"],a:0,e:"過去の完了は「了」。",s:"我昨天看了一部電影。",p:"wǒ zuó tiān kàn le yí bù diàn yǐng",j:"私は昨日、映画を1本見ました。",k:["昨天|zuó tiān|昨日","部|bù|本（映画の量詞）","電影|diàn yǐng|映画"]},
+{c:"アスペクト",q:"我（　）去過台南。",o:["不","沒","別","不會"],a:1,e:"経験の否定は「沒…過」。",s:"我沒去過台南。",p:"wǒ méi qù guò tái nán",j:"私は台南に行ったことがありません。",k:["沒|méi|〜ていない","過|guò|〜したことがある","台南|tái nán|台南"]},
+{c:"アスペクト",q:"下雨（　），我們不去了。",o:["過","著","了","的"],a:2,e:"文末の「了」は状況の変化。",s:"下雨了，我們不去了。",p:"xià yǔ le wǒ men bú qù le",j:"雨が降ってきたので、行くのをやめます。",k:["下雨|xià yǔ|雨が降る","了|le|変化","我們|wǒ men|私たち"]},
+{c:"アスペクト",q:"他（　）電話呢。",o:["在打","打了","打過","打著"],a:0,e:"進行は「在＋動詞」。",s:"他在打電話呢。",p:"tā zài dǎ diàn huà ne",j:"彼は今、電話をかけているところです。",k:["在|zài|〜している","打電話|dǎ diàn huà|電話をかける","呢|ne|〜しているよ"]},
+{c:"アスペクト",q:"門（　），你可以進來。",o:["開了過","開著","開過","開得"],a:1,e:"状態の持続は「著」。",s:"門開著，你可以進來。",p:"mén kāi zhe nǐ kě yǐ jìn lái",j:"ドアは開いています、入っていいですよ。",k:["門|mén|ドア","著|zhe|〜ている","進來|jìn lái|入って来る"]},
+{c:"アスペクト",q:"我昨天沒（　）早餐。",o:["吃了","吃過","吃","吃著"],a:2,e:"「沒」と「了」は共起しない。",s:"我昨天沒吃早餐。",p:"wǒ zuó tiān méi chī zǎo cān",j:"私は昨日、朝食を食べませんでした。",k:["吃|chī|食べる","早餐|zǎo cān|朝食"]},
+{c:"補語",q:"這本書我已經看（　）了。",o:["完","好嗎","到","見"],a:0,e:"動作の完結は結果補語「完」。",s:"這本書我已經看完了。",p:"zhè běn shū wǒ yǐ jīng kàn wán le",j:"この本は私がもう読み終えました。",k:["已經|yǐ jīng|すでに","看完|kàn wán|読み終える"]},
+{c:"補語",q:"他說得太快，我聽（　）。",o:["不懂","沒懂","不會懂","懂不"],a:0,e:"可能補語の否定は「聽不懂」。",s:"他說得太快，我聽不懂。",p:"tā shuō de tài kuài wǒ tīng bù dǒng",j:"彼は話すのが速すぎて、私は聞き取れません。",k:["太|tài|〜すぎる","快|kuài|速い","聽不懂|tīng bù dǒng|聞き取れない"]},
+{c:"補語",q:"他中文說（　）很好。",o:["的","得","地","著"],a:1,e:"様態補語は「得」。",s:"他中文說得很好。",p:"tā zhōng wén shuō de hěn hǎo",j:"彼は中国語を話すのがとても上手です。",k:["中文|zhōng wén|中国語","得|de|様態補語を導く"]},
+{c:"補語",q:"我在夜市（　）了很好吃的東西。",o:["找到","找著","找完","找得"],a:0,e:"目的達成は結果補語「到」。",s:"我在夜市找到了很好吃的東西。",p:"wǒ zài yè shì zhǎo dào le hěn hǎo chī de dōng xi",j:"私は夜市でとてもおいしいものを見つけました。",k:["夜市|yè shì|夜市","找到|zhǎo dào|見つける","東西|dōng xi|もの"]},
+{c:"比較",q:"台北（　）高雄熱嗎？",o:["比","跟","像","從"],a:0,e:"差を示す比較は「比」。",s:"台北比高雄熱嗎？",p:"tái běi bǐ gāo xióng rè ma",j:"台北は高雄より暑いですか。",k:["比|bǐ|〜より","高雄|gāo xióng|高雄"]},
+{c:"比較",q:"這個（　）那個一樣貴。",o:["比","跟","比較","最"],a:1,e:"同等比較は「跟…一樣」。",s:"這個跟那個一樣貴。",p:"zhè ge gēn nà ge yí yàng guì",j:"これはあれと同じくらい高いです。",k:["跟|gēn|〜と","一樣|yí yàng|同じ","貴|guì|高い"]},
+{c:"比較",q:"他比我（　）。",o:["很高","非常高","高一點","太高"],a:2,e:"比較文では「很/非常/太」は使えない。",s:"他比我高一點。",p:"tā bǐ wǒ gāo yì diǎn",j:"彼は私より少し背が高いです。",k:["高|gāo|背が高い","一點|yì diǎn|少し"]},
+{c:"比較",q:"今天（　）昨天冷。（今日のほうが寒くない）",o:["不比","沒有","比較","最"],a:1,e:"A沒有B＋形容詞＝AはBほど〜ない。",s:"今天沒有昨天冷。",p:"jīn tiān méi yǒu zuó tiān lěng",j:"今日は昨日ほど寒くありません。",k:["沒有|méi yǒu|〜ほど…ない","冷|lěng|寒い"]},
+{c:"助動詞",q:"我（　）說一點中文。",o:["能","會","可以","要"],a:1,e:"学習で身につけた技能は「會」。",s:"我會說一點中文。",p:"wǒ huì shuō yì diǎn zhōng wén",j:"私は中国語が少し話せます。",k:["會|huì|〜できる（習得）","一點|yì diǎn|少し"]},
+{c:"助動詞",q:"我今天很忙，（　）去。",o:["不會","不能","不可以","不想要"],a:1,e:"条件が許さない不可能は「不能」。",s:"我今天很忙，不能去。",p:"wǒ jīn tiān hěn máng bù néng qù",j:"今日は忙しいので、行けません。",k:["忙|máng|忙しい","不能|bù néng|〜できない"]},
+{c:"助動詞",q:"這裡（　）抽菸嗎？",o:["會","可以","想","要"],a:1,e:"許可を尋ねるのは「可以」。",s:"這裡可以抽菸嗎？",p:"zhè lǐ kě yǐ chōu yān ma",j:"ここでタバコを吸ってもいいですか。",k:["這裡|zhè lǐ|ここ","可以|kě yǐ|〜してよい","抽菸|chōu yān|タバコを吸う"]},
+{c:"語順",q:"正しい語順は？",o:["我明天去台北坐火車","我明天坐火車去台北","明天我去台北坐火車","我坐火車明天去台北"],a:1,e:"主語＋時間＋方式＋動詞＋場所。",s:"我明天坐火車去台北。",p:"wǒ míng tiān zuò huǒ chē qù tái běi",j:"私は明日、電車で台北に行きます。",k:["明天|míng tiān|明日","坐|zuò|乗る","火車|huǒ chē|電車"]},
+{c:"語順",q:"正しい語順は？",o:["我在圖書館看書","我看書在圖書館","在圖書館我看書了嗎","我看在圖書館書"],a:0,e:"「在＋場所」は動詞の前。",s:"我在圖書館看書。",p:"wǒ zài tú shū guǎn kàn shū",j:"私は図書館で本を読みます。",k:["圖書館|tú shū guǎn|図書館","看書|kàn shū|本を読む"]},
+{c:"語順",q:"正しい語順は？",o:["他每天七點起床","他七點每天起床","每天他起床七點","他起床每天七點"],a:0,e:"大きい時間→小さい時間の順。",s:"他每天七點起床。",p:"tā měi tiān qī diǎn qǐ chuáng",j:"彼は毎日7時に起きます。",k:["每天|měi tiān|毎日","七點|qī diǎn|7時","起床|qǐ chuáng|起きる"]},
+{c:"語順",q:"正しい語順は？",o:["我學中文兩年了","我學了兩年中文了","兩年我學中文了","我中文學兩年"],a:1,e:"時量補語は動詞の後ろ、目的語はその後。",s:"我學了兩年中文了。",p:"wǒ xué le liǎng nián zhōng wén le",j:"私は中国語を2年間学んでいます。",k:["學|xué|学ぶ","兩年|liǎng nián|2年間"]},
+{c:"複文",q:"（　）下雨，所以我沒去。",o:["雖然","因為","如果","但是"],a:1,e:"原因は「因為…所以…」。",s:"因為下雨，所以我沒去。",p:"yīn wèi xià yǔ suǒ yǐ wǒ méi qù",j:"雨が降ったので、私は行きませんでした。",k:["因為|yīn wèi|なぜなら","所以|suǒ yǐ|だから"]},
+{c:"複文",q:"（　）很貴，但是我還是買了。",o:["因為","雖然","如果","所以"],a:1,e:"逆接は「雖然…但是…」。",s:"雖然很貴，但是我還是買了。",p:"suī rán hěn guì dàn shì wǒ hái shì mǎi le",j:"高かったけれど、私はやはり買いました。",k:["雖然|suī rán|〜だけれど","但是|dàn shì|しかし","還是|hái shì|やはり"]},
+{c:"複文",q:"（　）你有空，就跟我一起去。",o:["因為","雖然","如果","可是"],a:2,e:"仮定は「如果…就…」。",s:"如果你有空，就跟我一起去。",p:"rú guǒ nǐ yǒu kòng jiù gēn wǒ yì qǐ qù",j:"もし時間があるなら、私と一緒に行きましょう。",k:["如果|rú guǒ|もし","有空|yǒu kòng|暇がある","一起|yì qǐ|一緒に"]},
+{c:"複文",q:"我先吃飯，（　）去看電影。",o:["然後","可是","還是","因為"],a:0,e:"順序は「先…然後…」。",s:"我先吃飯，然後去看電影。",p:"wǒ xiān chī fàn rán hòu qù kàn diàn yǐng",j:"まず食事をして、それから映画を見に行きます。",k:["先|xiān|まず","吃飯|chī fàn|食事する","然後|rán hòu|それから"]},
+{c:"機能語",q:"請（　）窗戶關上。",o:["被","把","給","對"],a:1,e:"処置文は「把＋目的語＋動詞＋結果」。",s:"請把窗戶關上。",p:"qǐng bǎ chuāng hù guān shàng",j:"窓を閉めてください。",k:["把|bǎ|〜を（処置）","窗戶|chuāng hù|窓","關上|guān shàng|閉める"]},
+{c:"機能語",q:"我的腳踏車（　）偷了。",o:["把","被","給了","讓著"],a:1,e:"受身は「被」。",s:"我的腳踏車被偷了。",p:"wǒ de jiǎo tà chē bèi tōu le",j:"私の自転車が盗まれました。",k:["腳踏車|jiǎo tà chē|自転車","被|bèi|〜される","偷|tōu|盗む"]},
+{c:"機能語",q:"我家（　）捷運站很近。",o:["從","到","離","跟"],a:2,e:"2点間の距離は「離」。",s:"我家離捷運站很近。",p:"wǒ jiā lí jié yùn zhàn hěn jìn",j:"私の家はMRTの駅から近いです。",k:["離|lí|〜から（距離）","捷運站|jié yùn zhàn|MRTの駅","近|jìn|近い"]},
+{c:"機能語",q:"（　）台北（　）高雄要兩個小時。",o:["離／到","從／到","在／到","跟／和"],a:1,e:"起点〜終点は「從…到…」。",s:"從台北到高雄要兩個小時。",p:"cóng tái běi dào gāo xióng yào liǎng ge xiǎo shí",j:"台北から高雄まで2時間かかります。",k:["從|cóng|〜から","到|dào|〜まで","小時|xiǎo shí|時間"]},
+{c:"数字・時刻",q:"「2時半」は？",o:["二點半","兩點半","二半點","兩半點"],a:1,e:"時刻の2時は「兩點」。",s:"現在兩點半。",p:"xiàn zài liǎng diǎn bàn",j:"今は2時半です。",k:["現在|xiàn zài|今","兩點|liǎng diǎn|2時","半|bàn|半"]},
+{c:"数字・時刻",q:"「1時間半」は？",o:["一點半","一個半小時","半個點","一半小時"],a:1,e:"時刻＝點、時間量＝小時。",s:"我等了一個半小時。",p:"wǒ děng le yí ge bàn xiǎo shí",j:"私は1時間半待ちました。",k:["等|děng|待つ","一個半小時|yí ge bàn xiǎo shí|1時間半"]},
+{c:"数字・時刻",q:"「150元」の読みは？",o:["一百五十元","一十五元","百五元","一千五元"],a:0,e:"口語では「一百五」とも。",s:"這個便當一百五十元。",p:"zhè ge biàn dāng yì bǎi wǔ shí yuán",j:"この弁当は150元です。",k:["便當|biàn dāng|弁当","元|yuán|元"]},
+{c:"数字・時刻",q:"「水曜日」は？",o:["星期二","星期三","星期四","禮拜日"],a:1,e:"月曜＝星期一から数える。",s:"我星期三有中文課。",p:"wǒ xīng qí sān yǒu zhōng wén kè",j:"私は水曜日に中国語の授業があります。",k:["星期三|xīng qí sān|水曜日","課|kè|授業"]},
+{c:"数字・時刻",q:"「10月5日」は？",o:["十月五號","五月十號","十號五月","十月五點"],a:0,e:"日付は「號」（書面語は「日」）。",s:"我的生日是十月五號。",p:"wǒ de shēng rì shì shí yuè wǔ hào",j:"私の誕生日は10月5日です。",k:["生日|shēng rì|誕生日","號|hào|〜日"]},
+{c:"発音・カタカナ",q:"「謝謝」に最も近いカタカナは？",o:["シェイシェイ","シエシエ","チエチエ","ジエジエ"],a:1,e:"x＝シ、ie＝イエ。",s:"謝謝你的幫忙。",p:"xiè xie nǐ de bāng máng",j:"手伝ってくれてありがとう。",k:["謝謝|xiè xie|ありがとう","幫忙|bāng máng|手伝い"]},
+{c:"発音・カタカナ",q:"「去 qù」に近いカタカナは？",o:["ク","キュー","チュイ","ツー"],a:2,e:"q＝有気のチ、ü＝イの口でユ。",s:"我要去郵局。",p:"wǒ yào qù yóu jú",j:"私は郵便局に行きます。",k:["去|qù|行く","郵局|yóu jú|郵便局"]},
+{c:"発音・カタカナ",q:"j と q の違いは？",o:["濁音と清音","無気音と有気音","長音の有無","鼻音の有無"],a:1,e:"j＝無気音、q＝有気音。日本語の濁清とは別の対立。",s:"他姐姐很漂亮。",p:"tā jiě jie hěn piào liang",j:"彼のお姉さんはとてもきれいです。",k:["姐姐|jiě jie|姉","漂亮|piào liang|きれい"]},
+{c:"発音・声調",q:"「你好」の実際の発音（変調後）は？",o:["nǐ hǎo","ní hǎo","nì hǎo","nī hao"],a:1,e:"3声＋3声は前が2声に変調。表記はnǐ hǎoのまま。",s:"你好，很高興認識你。",p:"nǐ hǎo hěn gāo xìng rèn shi nǐ",j:"こんにちは、お会いできて嬉しいです。",k:["高興|gāo xìng|嬉しい","認識|rèn shi|知り合う"]},
+{c:"発音・声調",q:"「不是」の正しい発音は？",o:["bù shì","bú shì","bǔ shì","bu shi"],a:1,e:"不は4声の前でbúに変調。",s:"我不是台灣人。",p:"wǒ bú shì tái wān rén",j:"私は台湾人ではありません。",k:["不是|bú shì|〜ではない","台灣人|tái wān rén|台湾人"]},
+{c:"発音・声調",q:"「一起」の発音は？",o:["yī qǐ","yí qǐ","yì qǐ","yi qi"],a:2,e:"一は1/2/3声の前でyì。",s:"我們一起吃飯吧。",p:"wǒ men yì qǐ chī fàn ba",j:"一緒にご飯を食べましょう。",k:["一起|yì qǐ|一緒に","吧|ba|〜しましょう"]},
+{c:"短文読解",q:"【公告】本店 週一公休，營業時間 11:00–21:00。→ 火曜12時に行ける？",o:["行ける","定休で行けない","不明","21時以降のみ"],a:0,e:"週一＝月曜が定休。火曜12時は営業時間内。",s:"本店週一公休，營業時間十一點到二十一點。",p:"běn diàn zhōu yī gōng xiū yíng yè shí jiān shí yī diǎn dào èr shí yī diǎn",j:"当店は月曜定休、営業時間は11時から21時までです。",k:["本店|běn diàn|当店","週一|zhōu yī|月曜日","公休|gōng xiū|定休","營業時間|yíng yè shí jiān|営業時間"]},
+{c:"短文読解",q:"【メモ】我今天要加班，大概八點才能回家。→ 意味は？",o:["8時に出発","残業で帰宅が遅い","8時に夕食","休みを取る"],a:1,e:"加班＝残業、才＝やっと。",s:"我今天要加班，大概八點才能回家。",p:"wǒ jīn tiān yào jiā bān dà gài bā diǎn cái néng huí jiā",j:"今日は残業で、だいたい8時にならないと帰れません。",k:["加班|jiā bān|残業する","大概|dà gài|だいたい","才|cái|やっと","回家|huí jiā|帰宅する"]},
+{c:"短文読解",q:"【広告】買兩件八折。→ 2着買うと？",o:["半額","2割引","1割引","3着目無料"],a:1,e:"台湾の「八折」＝定価の80%＝2割引。",s:"買兩件八折，第三件半價。",p:"mǎi liǎng jiàn bā zhé dì sān jiàn bàn jià",j:"2着買うと2割引、3着目は半額です。",k:["八折|bā zhé|2割引","第三件|dì sān jiàn|3着目","半價|bàn jià|半額"]},
+{c:"短文読解",q:"【掲示】捷運車廂內禁止飲食。→ 許されるのは？",o:["飲み物","ガム","読書","食事"],a:2,e:"禁止飲食＝飲食禁止。読書は対象外。",s:"捷運車廂內禁止飲食，違者罰款。",p:"jié yùn chē xiāng nèi jìn zhǐ yǐn shí wéi zhě fá kuǎn",j:"MRT車内は飲食禁止、違反者は罰金です。",k:["車廂|chē xiāng|車両","禁止|jìn zhǐ|禁止","飲食|yǐn shí|飲食","罰款|fá kuǎn|罰金"]},
+{c:"短文読解",q:"【会話】直走，到第二個路口右轉就到了。→ 道順は？",o:["1つ目を左","2つ目の交差点を右","向かいのビル","駅の中"],a:1,e:"第二個路口右轉＝2つ目の交差点を右折。",s:"直走，到第二個路口右轉就到了。",p:"zhí zǒu dào dì èr ge lù kǒu yòu zhuǎn jiù dào le",j:"まっすぐ行って、2つ目の交差点を右に曲がれば着きます。",k:["直走|zhí zǒu|まっすぐ行く","路口|lù kǒu|交差点","右轉|yòu zhuǎn|右折する"]},
+{c:"短文読解",q:"【メール】會議改到下週五下午三點，地點不變。→ 変わったのは？",o:["場所","日時","参加者","議題"],a:1,e:"地點不變＝場所は変更なし。",s:"會議改到下週五下午三點，地點不變。",p:"huì yì gǎi dào xià zhōu wǔ xià wǔ sān diǎn dì diǎn bú biàn",j:"会議は来週金曜の午後3時に変更、場所は変わりません。",k:["會議|huì yì|会議","改到|gǎi dào|〜に変更する","地點|dì diǎn|場所","不變|bú biàn|変わらない"]}
+];
+
+/* ===== 共通 ===== */
+const S=k=>localStorage.getItem(k),SS=(k,v)=>localStorage.setItem(k,v);
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');scrollTo(0,0);});
+const CATS=[...new Set(VOCAB.map(v=>v.cat))];
+
+function expHTML(q){
+  let h=`<div><b>ポイント：</b>${q.e}</div>`;
+  if(q.s){h+=`<div class="lbl">完成文</div><div class="zh">${q.s}</div>`;
+    if(q.p)h+=`<div class="py">${q.p}　${tb(q.p)}</div><div class="bpmf">${toB(q.p)}</div><div class="kana">${toK(q.p)}</div>`;}
+  if(q.j)h+=`<div class="lbl">日本語訳</div><div>${q.j}</div>`;
+  if(q.k&&q.k.length){
+    h+=`<div class="lbl">キーワード</div><table><tr><th style="width:22%">語</th><th style="width:26%">ピンイン</th><th style="width:24%">カタカナ</th><th>意味</th></tr>`;
+    h+=q.k.map(s=>{const[w,p,m]=s.split('|');return `<tr><td class="zh">${w}</td><td class="py">${p} ${tb(p)}</td><td class="kana">${toK(p)}</td><td>${m}</td></tr>`;}).join('')+'</table>';}
+  return h;}
+
+document.getElementById('bpmfTable').innerHTML='<table>'+[
+["声母","ㄅb バ行｜ㄆp パ行(有気)｜ㄇm マ行｜ㄈf ファ行｜ㄉd ダ行｜ㄊt タ行(有気)｜ㄋn ナ行｜ㄌl ラ行｜ㄍg ガ行｜ㄎk カ行(有気)｜ㄏh ハ行｜ㄐj ジ｜ㄑq チ(有気)｜ㄒx シ｜ㄓzh ジ｜ㄔch チ(有気)｜ㄕsh シ｜ㄖr リ｜ㄗz ズ｜ㄘc ツ(有気)｜ㄙs ス"],
+["介音","ㄧi＝イ｜ㄨu＝ウ｜ㄩü＝ユイ"],
+["単韻母","ㄚa｜ㄛo｜ㄜe（オとウの中間）｜ㄦer＝アル"],
+["複韻母","ㄞai アイ｜ㄟei エイ｜ㄠao アオ｜ㄡou オウ"],
+["鼻韻母","ㄢan アン(舌先)｜ㄣen エン(舌先)｜ㄤang アン(鼻)｜ㄥeng オン(鼻)"]
+].map(r=>`<tr><th style="width:18%">${r[0]}</th><td class="bpmf">${r[1]}</td></tr>`).join('')+'</table>';
+
+let tOk=0,tAll=0;
+function newTone(){
+  const pool=VOCAB.filter(v=>v.tnn.length>=2&&v.tnn.length<=3);
+  const v=pool[Math.floor(Math.random()*pool.length)],c=v.tnn.join('-');
+  const set=new Set([c]);while(set.size<4)set.add(v.tnn.map(()=>1+Math.floor(Math.random()*4)).join('-'));
+  const opts=[...set].sort(()=>Math.random()-.5);
+  document.getElementById('toneArea').innerHTML=
+   `<div class="q"><div class="stem"><span class="zh" style="font-size:30px">${v.zh}</span>　<span class="muted">（${v.ja}）</span><br><span class="kana">${v.kn}</span><br>声調パターンは？（軽声は5）</div>
+    ${opts.map(o=>`<button class="opt" data-o="${o}">${o}</button>`).join('')}
+    <div class="exp">正解：${c}｜${v.py}｜${v.bp}｜${v.kn}</div></div>`;
+  document.querySelectorAll('#toneArea .opt').forEach(b=>b.onclick=function(){
+    const box=this.closest('.q');if(box.dataset.done)return;box.dataset.done=1;tAll++;
+    box.querySelectorAll('.opt').forEach(x=>{if(x.dataset.o===c)x.classList.add('correct');});
+    if(this.dataset.o===c)tOk++;else this.classList.add('wrong');
+    box.querySelector('.exp').classList.add('show');
+    document.getElementById('toneScore').textContent=`正解 ${tOk} / ${tAll}`;});}
+document.getElementById('toneNew').onclick=newTone;newTone();
+
+let deck=[],idx=0,flipped=false,weak=JSON.parse(S('tocfl_weak')||'{}'),weakOnly=false;
+const catSel=document.getElementById('catSel');
+catSel.innerHTML='<option value="ALL">全カテゴリ（'+VOCAB.length+'語）</option>'+CATS.map(c=>`<option value="${c}">${c}（${VOCAB.filter(v=>v.cat===c).length}）</option>`).join('');
+function buildDeck(){deck=VOCAB.filter(v=>catSel.value==='ALL'||v.cat===catSel.value);
+ if(weakOnly)deck=deck.filter(v=>weak[v.zh+v.py]);
+ if(document.getElementById('shuffleChk').checked)deck=deck.slice().sort(()=>Math.random()-.5);
+ idx=0;render();}
+function render(){
+ const f=document.getElementById('fFront'),p=document.getElementById('fPin'),bp=document.getElementById('fBp'),kn=document.getElementById('fKn'),b=document.getElementById('fBack');
+ if(!deck.length){f.textContent='該当なし';[p,bp,kn,b].forEach(e=>e.classList.add('hidden'));document.getElementById('progText').textContent='0 / 0';return;}
+ const v=deck[idx],m=document.getElementById('modeSel').value;
+ f.textContent=m==='zh2ja'?v.zh:m==='ja2zh'?v.ja:m==='py2zh'?v.py:v.kn;
+ p.innerHTML=v.py+'　'+tb(v.py);bp.textContent=v.bp;kn.textContent=v.kn;
+ b.innerHTML=(m==='zh2ja'?v.ja:v.zh)+'　<span class="muted">['+v.cat+']</span>';
+ p.className='pin hidden';bp.className='bp hidden';kn.className='kn hidden';b.className='mean hidden';flipped=false;
+ document.getElementById('progText').textContent=(idx+1)+' / '+deck.length+(weak[v.zh+v.py]?'　★苦手':'');
+ document.getElementById('progBar').style.width=((idx+1)/deck.length*100)+'%';
+ document.getElementById('weakInfo').textContent='苦手登録：'+Object.keys(weak).length+'語';}
+function flip(){flipped=!flipped;
+ document.getElementById('fPin').className='pin'+(flipped?'':' hidden');
+ document.getElementById('fBp').className='bp'+(flipped?'':' hidden');
+ document.getElementById('fKn').className='kn'+(flipped?'':' hidden');
+ document.getElementById('fBack').className='mean'+(flipped?'':' hidden');}
+function next(ok){if(!deck.length)return;const v=deck[idx],k=v.zh+v.py;
+ if(ok===true)delete weak[k];if(ok===false)weak[k]=1;
+ SS('tocfl_weak',JSON.stringify(weak));idx=(idx+1)%deck.length;render();}
+document.getElementById('btnFlip').onclick=flip;
+document.getElementById('btnOk').onclick=()=>next(true);
+document.getElementById('btnNg').onclick=()=>next(false);
+document.getElementById('btnPrev').onclick=()=>{idx=(idx-1+deck.length)%deck.length;render();};
+document.getElementById('flashBox').onclick=flip;
+document.getElementById('onlyWeak').onclick=function(){weakOnly=!weakOnly;this.textContent=weakOnly?'苦手のみ：ON':'苦手のみ';buildDeck();};
+document.getElementById('resetProg').onclick=()=>{if(confirm('苦手登録を消去しますか？')){weak={};SS('tocfl_weak','{}');buildDeck();}};
+catSel.onchange=buildDeck;document.getElementById('modeSel').onchange=buildDeck;document.getElementById('shuffleChk').onchange=buildDeck;
+document.addEventListener('keydown',e=>{if(!document.getElementById('t2').classList.contains('active'))return;
+ if(e.code==='Space'){e.preventDefault();flip();}if(e.code==='ArrowRight')next(true);if(e.code==='ArrowLeft')next(false);});
+buildDeck();
+
+const catSel2=document.getElementById('catSel2');
+catSel2.innerHTML='<option value="ALL">全カテゴリ</option>'+CATS.map(c=>`<option value="${c}">${c}</option>`).join('');
+function renderList(){
+ const kw=document.getElementById('search').value.trim().toLowerCase(),c=catSel2.value;
+ const d=VOCAB.filter(v=>(c==='ALL'||v.cat===c)&&(!kw||(v.zh+v.py+v.ja+v.bp+v.kn).toLowerCase().includes(kw)));
+ document.getElementById('countInfo').textContent=d.length+' 語';
+ const by={};d.forEach(v=>{(by[v.cat]=by[v.cat]||[]).push(v);});
+ document.getElementById('listArea').innerHTML=Object.keys(by).map(k=>
+  `<h3>${k}（${by[k].length}）</h3><table><tr><th>繁体字</th><th>ピンイン</th><th>注音</th><th>カタカナ</th><th>声調</th><th>意味</th></tr>`+
+  by[k].map(v=>`<tr><td class="zh">${v.zh}</td><td class="py">${v.py}</td><td class="bpmf">${v.bp}</td><td class="kana">${v.kn}</td><td>${tb(v.py)}</td><td>${v.ja}</td></tr>`).join('')+'</table>').join('');}
+document.getElementById('search').oninput=renderList;catSel2.onchange=renderList;renderList();
+
+document.getElementById('gramArea').innerHTML=GRAMMAR.map(g=>
+ `<div class="card"><h3 style="margin-top:0">${g.t}</h3><div class="zh">${g.ex}</div>
+  <div class="py">${g.py}　${tb(g.py)}</div><div class="bpmf">${g.bp}</div><div class="kana">${g.kn}</div>
+  <div>${g.ja}</div><div class="exp show" style="margin-top:6px">⚠ ${g.note}</div></div>`).join('');
+
+const QCATS=[...new Set(QUIZ.map(q=>q.c))];
+const qCat=document.getElementById('qCat');
+qCat.innerHTML='<option value="ALL">全分野（'+QUIZ.length+'問）</option>'+QCATS.map(c=>`<option value="${c}">${c}（${QUIZ.filter(q=>q.c===c).length}）</option>`).join('');
+let qOk=0,qAns=0;
+function renderQuiz(){
+ qOk=0;qAns=0;updateScore();
+ const data=QUIZ.filter(q=>qCat.value==='ALL'||q.c===qCat.value).slice().sort(()=>Math.random()-.5);
+ document.getElementById('quizArea').innerHTML=data.map((q,i)=>
+  `<div class="q" data-a="${q.a}"><span class="pill">${q.c}</span><div class="stem">Q${i+1}. ${q.q}</div>
+   ${q.o.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+   <div class="exp">${expHTML(q)}</div></div>`).join('');
+ document.querySelectorAll('#quizArea .opt').forEach(btn=>btn.onclick=function(){
+  const box=this.closest('.q');if(box.dataset.done)return;box.dataset.done=1;
+  const a=+box.dataset.a,j=+this.dataset.j;
+  box.querySelectorAll('.opt').forEach(b=>{if(+b.dataset.j===a)b.classList.add('correct');});
+  if(j!==a)this.classList.add('wrong');else qOk++;
+  qAns++;box.querySelector('.exp').classList.add('show');updateScore();});}
+function updateScore(){document.getElementById('quizScore').textContent=`正解 ${qOk} / 解答 ${qAns}（正答率 ${qAns?Math.round(qOk/qAns*100)+'%':'—'}）`;}
+document.getElementById('qStart').onclick=renderQuiz;
+document.getElementById('qAllExp').onclick=()=>document.querySelectorAll('#quizArea .exp').forEach(e=>e.classList.add('show'));
+renderQuiz();
+
+let mockData=[],t0=null,timerId=null;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+document.getElementById('mockStart').onclick=()=>{
+ mockData=QUIZ.slice().sort(()=>Math.random()-.5).slice(0,25);
+ document.getElementById('mockResult').style.display='none';
+ document.getElementById('mockArea').innerHTML=mockData.map((q,i)=>
+  `<div class="q" data-a="${q.a}"><div class="stem">第${i+1}題　${q.q}</div>
+   ${q.o.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+   <div class="exp">${expHTML(q)}</div></div>`).join('');
+ document.querySelectorAll('#mockArea .opt').forEach(btn=>btn.onclick=function(){
+  const box=this.closest('.q');box.querySelectorAll('.opt').forEach(b=>b.style.outline='');
+  this.style.outline='2px solid var(--accent)';box.dataset.sel=this.dataset.j;});
+ clearInterval(timerId);t0=Date.now();
+ timerId=setInterval(()=>{document.getElementById('timer').textContent=fmt(Math.floor((Date.now()-t0)/1000));},1000);};
+document.getElementById('mockFinish').onclick=()=>{
+ if(!mockData.length){alert('先に「模試開始」を押してください');return;}
+ clearInterval(timerId);let ok=0;
+ document.querySelectorAll('#mockArea .q').forEach(box=>{
+  const a=+box.dataset.a,sel=box.dataset.sel!==undefined?+box.dataset.sel:-1;
+  box.querySelectorAll('.opt').forEach(b=>{if(+b.dataset.j===a)b.classList.add('correct');else if(+b.dataset.j===sel)b.classList.add('wrong');});
+  box.querySelector('.exp').classList.add('show');if(sel===a)ok++;});
+ const rate=Math.round(ok/mockData.length*100),sc=Math.round(rate*0.8);
+ const judge=rate>=80?'合格圏（語彙を1000語へ拡張）':rate>=65?'ボーダー（⑤文法の抜けを補強）':'要強化（⑤を一周してから再挑戦）';
+ const r=document.getElementById('mockResult');r.style.display='block';
+ r.innerHTML=`<h3 style="margin-top:0">採点結果</h3>
+  <p>正解 <b>${ok} / ${mockData.length}</b>（正答率 ${rate}%）／ 所要時間 ${document.getElementById('timer').textContent}</p>
+  <p>80点満点換算の目安：<b>${sc} 点</b>（Level 2 読解の目安＝60点）</p><p>判定：<b>${judge}</b></p>`;
+ scrollTo(0,document.body.scrollHeight);};
+
+const CHECKS=["カタカナ無しでピンインが読める","注音21声母を暗記","有気音と無気音を区別して発音できる","声調ドリル正答率90%","三声変調・不/一の変調を説明できる","単語カード全カテゴリ1周","苦手語彙を50語以下に圧縮","文法40項目を通読","演習の完成文を全て音読3回","キーワードを全て暗記","短文読解で5問以上正解","模試を25分以内で正答率80%以上"];
+const cs=JSON.parse(S('tocfl_check')||'{}');
+document.getElementById('checkArea').innerHTML=CHECKS.map((c,i)=>
+ `<label class="checkbox"><input type="checkbox" data-i="${i}" ${cs[i]?'checked':''}><span>${c}</span></label>`).join('');
+document.querySelectorAll('#checkArea input').forEach(b=>b.onchange=function(){cs[this.dataset.i]=this.checked;SS('tocfl_check',JSON.stringify(cs));});
+
+document.getElementById('btnExport').onclick=()=>{
+ document.getElementById('ioBox').value=JSON.stringify({weak:weak,check:cs});};
+document.getElementById('btnImport').onclick=()=>{
+ try{const d=JSON.parse(document.getElementById('ioBox').value);
+  if(d.weak){SS('tocfl_weak',JSON.stringify(d.weak));}
+  if(d.check){SS('tocfl_check',JSON.stringify(d.check));}
+  alert('読み込みました。ページを再読み込みします。');location.reload();}
+ catch(e){alert('JSONの形式が正しくありません');}};
+
+if('serviceWorker' in navigator){
+ window.addEventListener('load',function(){
+  navigator.serviceWorker.register('sw.js').then(function(){
+   document.getElementById('swState').textContent='オフライン利用可（キャッシュ済み）';
+  }).catch(function(){
+   document.getElementById('swState').textContent='オフライン機能は未登録';});});}
+</script>
+</body>
+</html>

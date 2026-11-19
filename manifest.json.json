@@ -1,0 +1,16 @@
+{
+  "name": "TOCFL Band A Level 2 トレーナー",
+  "short_name": "TOCFL A2",
+  "description": "華語文能力測驗 入門基礎級 Level 2 の独学用アプリ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
