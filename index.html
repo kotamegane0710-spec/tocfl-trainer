@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>TOCFL A2 Trainer v4</title>
+<title>TOCFL A2 Trainer v6</title>
 <style>
 :root{--bg:#0f1419;--pa:#172029;--pb:#1e2a35;--ln:#2c3a47;--tx:#e8eef4;--sb:#9db0c2;--ac:#3fa7d6;--a2:#f2b134;--ok:#4caf7d;--ng:#e2604f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -48,7 +48,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 </head>
 <body>
 <header>
-<h1>TOCFL Band A Level 2 トレーナー v4</h1>
+<h1>TOCFL Band A Level 2 トレーナー v6</h1>
 <p id="hd">読み込み中…</p>
 </header>
 <nav>
@@ -98,6 +98,8 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <p>主語 ＋ 時間 ＋ 場所 ＋ 方式 ＋ 動詞。日本語と違い、時間と場所は必ず動詞より前に置きます（例：私は／明日／台北で／友達と／食事します）。</p>
 <h3>3. 日本語と意味がずれる漢字語</h3>
 <p>「勉強＝無理強い」「告訴＝伝える」のように、字面で判断すると誤読する語です。③語彙表の「要注意語」カテゴリで集中的に処理してください。</p>
+<h3>カタカナ表示について</h3>
+<p>カタカナは導入期の補助です。韻母 e（/ɤ/）、有気音と無気音、-n と -ng はカタカナでは区別できません。⑧チェックリストの「カタカナ無しでピンインが読める」を達成したら参照をやめてください。</p>
 </div>
 </section>
 
@@ -130,7 +132,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <section id="t4">
 <h2>分野別演習</h2>
 <div class="card"><div class="row"><select id="qc"></select><button class="btn" id="qs">出題</button><button class="btn s" id="qw">誤答のみ再演習</button><button class="btn s" id="qe">全解説</button></div>
-<p style="font-size:12px;color:var(--sb);margin:6px 0 0">解答すると完成文・ピンイン・カタカナ・日本語訳・重要語が表示されます。誤答は自動で蓄積されます。</p></div>
+<p style="font-size:12px;color:var(--sb);margin:6px 0 0">解答すると完成文・ピンイン・カタカナ・日本語訳・重要語が表示されます。</p></div>
 <div id="qa"></div>
 </section>
 
@@ -165,7 +167,7 @@ footer{text-align:center;color:var(--sb);font-size:11px;padding:16px}
 <footer>単一HTMLファイル・外部通信なし</footer>
 
 <script>
-/* ===== 発音変換（ピンイン→注音・カタカナ） ===== */
+/* ===== 発音変換（ピンイン→注音・カタカナ）v6 ===== */
 const TONE={"ā":"a1","á":"a2","ǎ":"a3","à":"a4","ē":"e1","é":"e2","ě":"e3","è":"e4","ī":"i1","í":"i2","ǐ":"i3","ì":"i4","ō":"o1","ó":"o2","ǒ":"o3","ò":"o4","ū":"u1","ú":"u2","ǔ":"u3","ù":"u4","ǖ":"v1","ǘ":"v2","ǚ":"v3","ǜ":"v4","ü":"v"};
 function splitTone(p){let t=0,s="";for(const ch of p){if(TONE[ch]){const v=TONE[ch];s+=v[0];if(v[1])t=+v[1];}else s+=ch;}return[s.toLowerCase(),t];}
 const ZI={b:"ㄅ",p:"ㄆ",m:"ㄇ",f:"ㄈ",d:"ㄉ",t:"ㄊ",n:"ㄋ",l:"ㄌ",g:"ㄍ",k:"ㄎ",h:"ㄏ",j:"ㄐ",q:"ㄑ",x:"ㄒ",zh:"ㄓ",ch:"ㄔ",sh:"ㄕ",r:"ㄖ",z:"ㄗ",c:"ㄘ",s:"ㄙ"};
@@ -173,13 +175,28 @@ const ZF={a:"ㄚ",o:"ㄛ",e:"ㄜ",ai:"ㄞ",ei:"ㄟ",ao:"ㄠ",ou:"ㄡ",an:"ㄢ",e
 const ZT=["","","ˊ","ˇ","ˋ"],ZL="˙";
 const ROW={b:"バビブベボ",p:"パピプペポ",m:"マミムメモ",f:"ファフィフフェフォ",d:"ダディドゥデド",t:"タティトゥテト",n:"ナニヌネノ",l:"ラリルレロ",g:"ガギグゲゴ",k:"カキクケコ",h:"ハヒフヘホ",j:"ジャジジュジェジョ",q:"チャチチュチェチョ",x:"シャシシュシェショ",zh:"ジャジジュジェジョ",ch:"チャチチュチェチョ",sh:"シャシシュシェショ",r:"ラリルレロ",z:"ザジズゼゾ",c:"ツァツィツツェツォ",s:"サシスセソ"};
 function rowc(ini,col){const r=ROW[ini];if(!r)return"";const m=r.match(/[ァ-ヴ][ャュョァィゥェォ]?/g);return m[{a:0,i:1,u:2,e:3,o:4}[col]];}
-const SPE={zhi:"ジー",chi:"チー",shi:"シー",ri:"リー",zi:"ズー",ci:"ツー",si:"スー",er:"アル",ya:"ヤ",ye:"イエ",yao:"ヤオ",you:"ヨウ",yan:"イエン",yin:"イン",yang:"ヤン",ying:"イン",yong:"ヨン",yi:"イー",yu:"ユー",yue:"ユエ",yuan:"ユエン",yun:"ユン",wa:"ワ",wo:"ウォ",wai:"ワイ",wei:"ウェイ",wan:"ワン",wen:"ウェン",wang:"ワン",weng:"ウォン",wu:"ウー",a:"アー",o:"オー",e:"ウー",ai:"アイ",ei:"エイ",ao:"アオ",ou:"オウ",an:"アン",en:"アン",ang:"アン",eng:"オン"};
-const FIN={a:["a",""],o:["o","ー"],e:["u","ー"],ai:["a","イ"],ei:["e","イ"],ao:["a","オ"],ou:["o","ウ"],an:["a","ン"],en:["u","ン"],ang:["a","ン"],eng:["u","ン"],u:["u","ー"],ua:["u","ア"],uo:["u","オ"],uai:["u","アイ"],ui:["u","イ"],uan:["u","アン"],un:["u","ン"],uang:["u","アン"],ong:["u","ォン"],i:["i","ー"],ia:["i","ャ"],ie:["i","ェ"],iao:["i","ャオ"],iu:["i","ョウ"],ian:["i","ェン"],in:["i","ン"],iang:["i","ャン"],ing:["i","ン"],iong:["i","ョン"],v:["i","ュー"],ve:["i","ュエ"],van:["i","ュエン"],vn:["i","ュン"]};
+const SPE={zhi:"ジー",chi:"チー",shi:"シー",ri:"リー",zi:"ズー",ci:"ツー",si:"スー",er:"アル",
+ya:"ヤ",ye:"イエ",yao:"ヤオ",you:"ヨウ",yan:"イエン",yin:"イン",yang:"ヤン",ying:"イン",yong:"ヨン",
+yi:"イー",yu:"ユー",yue:"ユエ",yuan:"ユエン",yun:"ユン",wa:"ワ",wo:"ウォ",wai:"ワイ",wei:"ウェイ",
+wan:"ワン",wen:"ウェン",wang:"ワン",weng:"ウォン",wu:"ウー",a:"アー",o:"オー",e:"オー",
+ai:"アイ",ei:"エイ",ao:"アオ",ou:"オウ",an:"アン",en:"エン",ang:"アン",eng:"オン"};
+const FIN={a:["a",""],o:["o","ー"],e:["o","ー"],ai:["a","イ"],ei:["e","イ"],ao:["a","オ"],ou:["o","ウ"],
+an:["a","ン"],en:["e","ン"],ang:["a","ン"],eng:["o","ン"],u:["u","ー"],ua:["u","ア"],uo:["u","オ"],
+uai:["u","アイ"],ui:["u","イ"],uan:["u","アン"],un:["u","ン"],uang:["u","アン"],ong:["o","ン"],
+i:["i","ー"],ia:["i","ャ"],ie:["i","ェ"],iao:["i","ャオ"],iu:["i","ョウ"],ian:["i","ェン"],in:["i","ン"],
+iang:["i","ャン"],ing:["i","ン"],iong:["i","ョン"],v:["i","ュー"],ve:["i","ュエ"],van:["i","ュエン"],vn:["i","ュン"]};
+const TMAP={zhe:"ジェー",che:"チェー",she:"シェー",re:"ルー"};
 function syl(p){const[s,t]=splitTone(p);let ini="",fin=s;
  for(const k of["zh","ch","sh","b","p","m","f","d","t","n","l","g","k","h","j","q","x","r","z","c","s"]){if(s.startsWith(k)){ini=k;fin=s.slice(k.length);break;}}
  if((ini=="j"||ini=="q"||ini=="x")&&fin[0]=="u")fin="v"+fin.slice(1);
  let zy="",kt="";
- if(SPE[s]){kt=SPE[s];}else if(ini){const f=FIN[fin];kt=f?rowc(ini,f[0])+f[1]:s;}else{kt=s;}
+ if(t===0&&ini&&fin==="e"){kt=rowc(ini,"a");}
+ else if(t===0&&!ini&&s==="e"){kt="ア";}
+ else if(t>0&&TMAP[s]){kt=TMAP[s];}
+ else if(SPE[s]){kt=SPE[s];}
+ else if(ini){const f=FIN[fin];kt=f?rowc(ini,f[0])+f[1]:s;}
+ else{kt=s;}
+ if(t===0)kt=kt.replace(/ー$/,"");
  if(ZF[s]&&!ini){zy=ZF[s];}
  else if(ini){zy=ZI[ini]+(ZF[fin]||"");}
  else{let x=s;
@@ -1544,7 +1561,7 @@ $("#mf").onclick=()=>{if(!mk.length)return;clearInterval(mt);let c=0,h="";
  window.scrollTo(0,document.body.scrollHeight);};
 
 /* チェックリスト */
-const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","三声変調／不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","文法40項目の例文を各3回音読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
+const CK=["カタカナ無しでピンインが読める","注音21声母を暗記した","有気音・無気音を区別できる","-n と -ng を聞き分けられる","三声変調／不・一の変調を理解した","単語カード全カテゴリ1周","苦手語を50語以下に圧縮","要注意語カテゴリを全問正解","文法40項目を通読した","文法40項目の例文を各3回音読した","各分野の演習を全問正解","短文読解10題を解説なしで正解","模試で80%以上","模試を30分以内で完走"];
 $("#ca").innerHTML=CK.map((t,i)=>`<label class="ck"><input type="checkbox" data-c="${i}" ${chk[i]?"checked":""}><span>${t}</span></label>`).join("");
 $$("#ca input").forEach(b=>b.onchange=()=>{chk[b.dataset.c]=b.checked;LS.set("chk",chk);});
 
